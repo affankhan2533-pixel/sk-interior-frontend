@@ -3,6 +3,7 @@ import Link from 'next/link';
 import SEO from '../../components/SEO';
 import SectionReveal from '../../components/SectionReveal';
 import JournalCard from '../../components/JournalCard';
+import SafeImage from '../../components/SafeImage';
 import { JOURNAL_ARTICLES, JOURNAL_CATEGORIES } from '../../data/journal';
 
 export default function JournalPage() {
@@ -106,7 +107,7 @@ export default function JournalPage() {
                       href={`/journal/${featuredArticle.slug}`}
                       className="block overflow-hidden rounded-2xl aspect-[16/10] bg-[#1A1A1A] relative group"
                     >
-                      <img
+                      <SafeImage
                         src={featuredArticle.coverImage}
                         alt={featuredArticle.title}
                         className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"

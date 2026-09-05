@@ -3,6 +3,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import SEO from '../components/SEO';
 import SectionReveal from '../components/SectionReveal';
+import SafeImage from '../components/SafeImage';
 import { API } from '../lib/api';
 
 const STUDIO_DETAILS = {
@@ -694,7 +695,7 @@ export default function ContactPage() {
               <div className="lg:col-span-6">
                 <SectionReveal direction="left" delay={150}>
                   <div className="relative rounded-3xl overflow-hidden aspect-[4/3] w-full border border-[#151515]/10 shadow-xl group">
-                    <img
+                    <SafeImage
                       src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=80"
                       alt="SK Interior Santacruz Studio entrance"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

@@ -1,15 +1,47 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from "react";
 
+/**
+ * SectionReveal — Fixed & Upgraded
+ *
+ * direction: "up" | "left" | "right" | "scale" | "clip"
+ *
+ * IMPORTANT: For direction="clip" we use a TWO-LEVEL wrapper:
+ *   - Outer div is the IntersectionObserver target (always visible to browser)
+ *   - Inner div carries the clip-path animation (.img-reveal-inner)
+ *   This ensures the observer can actually see the element even when
+ *   the clip-path would otherwise make it appear zero-width.
+ *
+ * Fallback: If JS fails or takes >3s, a CSS @keyframes backup makes
+ * content visible after 3s via .reveal-fallback.
+ */
 export default function SectionReveal({
   children,
-  className = '',
+  className = "",
   delay = 0,
-  direction = 'up',
+  direction = "up",
+  threshold,
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const domRef = useRef(null);
 
+  // Adaptive threshold: lower on mobile so reveals fire reliably
+  const getThreshold = () => {
+    if (threshold !== undefined) return threshold;
+    if (typeof window !== "undefined" && window.innerWidth < 768) return 0.05;
+    return 0.12;
+  };
+
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Respect prefers-reduced-motion
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIsVisible(true);
+      return;
+    }
+
+    const t = getThreshold();
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -19,40 +51,53 @@ export default function SectionReveal({
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: t, rootMargin: "0px 0px -40px 0px" }
     );
 
-    const currentRef = domRef.current;
-    if (currentRef) observer.observe(currentRef);
+    const el = domRef.current;
+    if (el) observer.observe(el);
+
+    // Safety fallback: make visible after 4s even if observer fails
+    const safetyTimer = setTimeout(() => setIsVisible(true), 4000);
 
     return () => {
-      if (currentRef) observer.unobserve(currentRef);
+      if (el) observer.unobserve(el);
+      clearTimeout(safetyTimer);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getTransform = () => {
-    if (isVisible) return 'translate3d(0,0,0)';
-    switch (direction) {
-      case 'up':
-        return 'translate3d(0, 32px, 0)';
-      case 'left':
-        return 'translate3d(-32px, 0, 0)';
-      case 'right':
-        return 'translate3d(32px, 0, 0)';
-      default:
-        return 'translate3d(0, 32px, 0)';
-    }
+  // ── clip direction: uses a two-level wrapper ──
+  if (direction === "clip") {
+    return (
+      <div
+        ref={domRef}
+        className={"img-reveal-container " + className}
+        style={{ "--delay": delay + "ms" }}
+      >
+        <div className={"img-reveal-inner" + (isVisible ? " is-visible" : "")}>
+          {children}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Standard directions: up / left / right / scale ──
+  const classMap = {
+    left:  "section-reveal-left",
+    right: "section-reveal-right",
+    scale: "section-reveal-scale",
+    up:    "section-reveal-up",
   };
+
+  const baseClass = classMap[direction] || "section-reveal-up";
 
   return (
     <div
       ref={domRef}
-      className={className}
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: getTransform(),
-        transition: `opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1) ${delay}ms, transform 0.8s cubic-bezier(0.23, 1, 0.32, 1) ${delay}ms`,
-      }}
+      className={[baseClass, isVisible ? "is-visible" : "", className]
+        .filter(Boolean)
+        .join(" ")}
+      style={{ "--delay": delay + "ms" }}
     >
       {children}
     </div>

@@ -22,7 +22,7 @@ function authH(token) {
 }
 
 function imgSrc(url) {
-  if (!url) return '';
+  if (!url) return '/images/placeholder.svg';
   return url.startsWith('/uploads') ? `${BACKEND}${url}` : url;
 }
 

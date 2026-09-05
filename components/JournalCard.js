@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SafeImage from './SafeImage';
 
 export default function JournalCard({ article, className = '' }) {
   if (!article) return null;
@@ -9,7 +10,7 @@ export default function JournalCard({ article, className = '' }) {
         href={`/journal/${article.slug}`}
         className="block overflow-hidden rounded-2xl mb-6 aspect-[16/10] bg-[#1A1A1A] relative border border-black/5"
       >
-        <img
+        <SafeImage
           src={article.coverImage}
           alt={article.title}
           loading="lazy"

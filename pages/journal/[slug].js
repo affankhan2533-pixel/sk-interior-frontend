@@ -2,6 +2,7 @@ import Link from 'next/link';
 import SEO from '../../components/SEO';
 import SectionReveal from '../../components/SectionReveal';
 import JournalCard from '../../components/JournalCard';
+import SafeImage from '../../components/SafeImage';
 import {
   JOURNAL_ARTICLES,
   getArticleBySlug,
@@ -119,7 +120,7 @@ export default function ArticleDetailPage({ article, relatedArticles }) {
           <div className="container-wide">
             <SectionReveal delay={250}>
               <div className="relative rounded-3xl overflow-hidden aspect-[16/9] max-h-[560px] w-full border border-white/10 shadow-2xl">
-                <img
+                <SafeImage
                   src={article.coverImage}
                   alt={article.title}
                   className="w-full h-full object-cover"
@@ -257,7 +258,7 @@ export default function ArticleDetailPage({ article, relatedArticles }) {
                         href={`/journal/${rel.slug}`}
                         className="block overflow-hidden rounded-xl aspect-[16/9] w-full relative"
                       >
-                        <img
+                        <SafeImage
                           src={rel.coverImage}
                           alt={rel.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

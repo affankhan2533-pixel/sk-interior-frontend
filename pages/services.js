@@ -81,7 +81,7 @@ const SERVICES_DATA = [
       'Furniture arrangement schematics',
     ],
     image:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80',
+      '/images/reviews/interior_bedroom_suite.jpg',
     relatedSlugs: ['altitude-penthouse', 'the-santacruz-residence'],
   },
   {
@@ -119,7 +119,7 @@ const SERVICES_DATA = [
       'White-glove handover & staging',
     ],
     image:
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80',
+      '/images/reviews/altitude_penthouse.jpg',
     relatedSlugs: ['merit-office-campus', 'the-sea-villa'],
   },
 ];
@@ -187,17 +187,21 @@ export default function ServicesPage() {
             PHASE 2 — EDITORIAL CINEMATIC SERVICES HERO
             ═══════════════════════════════════════════════════════════════════ */}
         <section
-          className="relative min-h-[60vh] lg:min-h-[70vh] flex flex-col justify-end overflow-hidden pb-16 lg:pb-24"
+          className="relative min-h-[65vh] lg:min-h-[75vh] flex flex-col justify-end overflow-hidden pb-16 lg:pb-24"
           style={{ background: 'var(--color-bg)', paddingTop: '140px' }}
         >
-          {/* Subtle Background Architectural Ambient Grid */}
-          <div
-            className="absolute inset-0 z-0 opacity-15 pointer-events-none"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 50% 50%, rgba(181, 154, 98, 0.12) 0%, transparent 70%)',
-            }}
-          />
+          {/* Background Hero Image Overlay */}
+          <div className="absolute inset-0 z-0 opacity-65 overflow-hidden pointer-events-none">
+            <div ref={heroImgRef} className="w-full h-full scale-110">
+              <SafeImage
+                src="/images/image copy.png"
+                alt="SK Interior Services & Practice"
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/40 to-black/30" />
+          </div>
 
           <div className="container-wide relative z-10">
             <SectionReveal direction="up">

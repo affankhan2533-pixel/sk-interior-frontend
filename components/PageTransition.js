@@ -1,71 +1,53 @@
-﻿import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 /**
- * PageTransition — Architectural reveal
- * Phase 1: thin gold line sweeps across
- * Phase 2: dark curtain covers viewport
- * Phase 3: new page renders behind it
- * Phase 4: curtain pulls away upward
- * Total: ~700ms max
+ * PageTransition
+ * Non-blocking, instant page transitions with top gold progress bar indicator.
+ * Prevents full-screen black overlay issues during client-side navigation.
  */
 export default function PageTransition({ children }) {
   const router = useRouter();
-  const [phase, setPhase] = useState('idle'); // idle | entering | exiting
-  const timerRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const clear = () => { if (timerRef.current) clearTimeout(timerRef.current); };
-
     const handleStart = (url) => {
-      if (url === router.asPath) return;
-      // Skip for reduced motion
-      if (typeof window !== 'undefined' &&
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      clear();
-      setPhase('entering');
+      if (url !== router.asPath) {
+        setLoading(true);
+      }
     };
 
     const handleComplete = () => {
-      clear();
-      setPhase('exiting');
-      timerRef.current = setTimeout(() => setPhase('idle'), 700);
+      setLoading(false);
     };
 
-    const handleError = handleComplete;
-
-    router.events.on('routeChangeStart',    handleStart);
+    router.events.on('routeChangeStart', handleStart);
     router.events.on('routeChangeComplete', handleComplete);
-    router.events.on('routeChangeError',    handleError);
+    router.events.on('routeChangeError', handleComplete);
 
     return () => {
-      clear();
-      router.events.off('routeChangeStart',    handleStart);
+      router.events.off('routeChangeStart', handleStart);
       router.events.off('routeChangeComplete', handleComplete);
-      router.events.off('routeChangeError',    handleError);
+      router.events.off('routeChangeError', handleComplete);
     };
   }, [router]);
 
   return (
     <>
-      {/* Architectural transition overlay */}
+      {/* Top Gold Navigation Loading Line */}
       <div
-        className={[
-          'page-transition-overlay',
-          phase === 'entering' ? 'is-entering' : '',
-          phase === 'exiting'  ? 'is-exiting'  : '',
-        ].filter(Boolean).join(' ')}
+        id="route-progress-bar"
+        className={`fixed top-0 left-0 right-0 h-[3px] bg-[#B59A62] z-[999999] transition-all duration-300 pointer-events-none ${
+          loading ? 'opacity-100 w-full' : 'opacity-0 w-0'
+        }`}
+        style={{
+          boxShadow: '0 0 10px rgba(181, 154, 98, 0.8)',
+        }}
         aria-hidden="true"
-      >
-        <div className="page-transition-line"    />
-        <div className="page-transition-curtain" />
-      </div>
-
-      {/* Scroll progress bar */}
-      <div id="scroll-progress" aria-hidden="true" />
+      />
 
       {children}
     </>
   );
 }
+

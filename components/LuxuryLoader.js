@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * LuxuryLoader
@@ -47,7 +47,7 @@ export default function LuxuryLoader() {
       id="luxury-loader"
       className={exiting ? 'loader-exiting' : ''}
       aria-hidden="true"
-      aria-label="Loading SK Interior"
+      role="presentation"
     >
       <div className="text-center">
         <p className="loader-sk">SK</p>

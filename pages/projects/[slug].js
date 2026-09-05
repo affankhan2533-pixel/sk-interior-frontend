@@ -9,18 +9,7 @@ import { PROJECTS, getProjectBySlug, getRelatedProjects } from '../../data/proje
 
 export default function ProjectDetailPage({ project, nextProject }) {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [heroReady, setHeroReady] = useState(false);
-
-  const heroImgRef = useRef(null);
-  const featureImgRef = useRef(null);
-
-  useParallax(heroImgRef, 0.12);
-  useParallax(featureImgRef, 0.15);
-
-  useEffect(() => {
-    const t = setTimeout(() => setHeroReady(true), 150);
-    return () => clearTimeout(t);
-  }, []);
+  const [heroReady, setHeroReady] = useState(true);
 
   if (!project) {
     return (

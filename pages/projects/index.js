@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import SEO from '../../components/SEO';
+import SafeImage from '../../components/SafeImage';
 import ProjectCard from '../../components/ProjectCard';
 import SectionReveal from '../../components/SectionReveal';
 import MagneticBtn from '../../components/MagneticBtn';
@@ -10,12 +11,7 @@ export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [isFiltering, setIsFiltering] = useState(false);
   const [heroTransform, setHeroTransform] = useState({ translateY: 0, opacity: 1 });
-  const [heroReady, setHeroReady] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setHeroReady(true), 150);
-    return () => clearTimeout(t);
-  }, []);
+  const [heroReady, setHeroReady] = useState(true);
 
   // Hero scroll response
   useEffect(() => {
@@ -72,15 +68,28 @@ export default function ProjectsPage() {
       <main className="overflow-x-hidden">
         {/* ── Hero Section ── */}
         <section
-          className="relative min-h-[45vh] lg:min-h-[50vh] flex flex-col justify-end transition-transform duration-300 ease-out"
+          className="relative min-h-[55vh] lg:min-h-[65vh] flex flex-col justify-end overflow-hidden pb-12 transition-transform duration-300 ease-out"
           style={{
             background: 'var(--color-bg)',
-            paddingTop: '130px',
+            paddingTop: '140px',
             transform: `translate3d(0, ${heroTransform.translateY}px, 0)`,
             opacity: heroTransform.opacity,
           }}
         >
-          <div className="container-wide section-padding-sm">
+          {/* Background Hero Image Overlay */}
+          <div className="absolute inset-0 z-0 opacity-65 overflow-hidden pointer-events-none">
+            <div className="w-full h-full scale-110">
+              <SafeImage
+                src="/images/image copy 2.png"
+                alt="SK Interior Portfolio Projects"
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/40 to-black/30" />
+          </div>
+
+          <div className="container-wide section-padding-sm relative z-10">
             <span
               className={`section-label text-[#B59A62] mb-6 block transition-all duration-700 ${
                 heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'

@@ -1,4 +1,4 @@
-﻿import '../styles/globals.css';
+import '../styles/globals.css';
 import { useRouter } from 'next/router';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -24,9 +24,6 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
-      {/* Premium cursor — desktop only, self-disables on touch */}
-      <CustomCursor />
-
       {/* Luxury intro loader — session-once */}
       {!admin && <LuxuryLoader />}
 

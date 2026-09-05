@@ -15,7 +15,7 @@ const DEFAULT_SLIDES = [
     alt: 'Santacruz Residence — SK Interior',
   },
   {
-    imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80',
+    imageUrl: '/images/reviews/altitude_penthouse.jpg',
     alt: 'Altitude Penthouse — SK Interior',
   },
   {
@@ -27,21 +27,33 @@ const DEFAULT_SLIDES = [
 const DEFAULT_TESTIMONIALS = [
   {
     name: 'Vikram & Radhika Mehta',
-    loc: 'Santacruz, Mumbai',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+    avatarInitials: 'VM',
+    loc: 'Santacruz West, Mumbai',
     text: 'SK Interior transformed our 3,200 sq ft apartment into a sanctuary of calm. Simran’s eye for material relationships and restraint created a space that feels deeply personal, quiet, and effortlessly luxurious.',
     project: 'The Santacruz Residence',
+    roomPhoto: '/images/reviews/santacruz_residence.jpg',
+    rating: 5,
   },
   {
     name: 'Siddharth Singhania',
-    loc: 'Worli, Mumbai',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
+    avatarInitials: 'SS',
+    loc: 'Worli Sea Face, Mumbai',
     text: 'The altitude penthouse demanded a design that respected the sea view without feeling like a glass showroom. The dark walnut joinery and smoked oak flooring ground the space masterfully.',
     project: 'Altitude Penthouse',
+    roomPhoto: '/images/reviews/altitude_penthouse.jpg',
+    rating: 5,
   },
   {
     name: 'Tarun & Meera Grover',
-    loc: 'Alibaug',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=250&q=80',
+    avatarInitials: 'TG',
+    loc: 'Alibaug Coast',
     text: 'Living in our Alibaug villa feels like floating between the interior and the landscape. The marine-grade teak and Kota stone age beautifully under coastal light.',
     project: 'The Sea Villa',
+    roomPhoto: '/images/reviews/interior_bedroom_suite.jpg',
+    rating: 5,
   },
 ];
 
@@ -141,7 +153,7 @@ export default function HomePage() {
   const [testimonials, setTestimonials] = useState(DEFAULT_TESTIMONIALS);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeService, setActiveService] = useState(0);
-  const [heroReady, setHeroReady] = useState(false);
+  const [heroReady, setHeroReady] = useState(true);
 
   // Scroll Progress States
   const [processProgress, setProcessProgress] = useState(0);
@@ -490,7 +502,7 @@ export default function HomePage() {
               <SectionReveal direction="clip" delay={150}>
                 <div className="relative">
                   <div className="img-cover ratio-3-4 rounded-xl shadow-luxe overflow-hidden" data-cursor="image">
-                    <div ref={manifestoImgRef} className="w-full h-full">
+                    <div ref={manifestoImgRef} className="w-full h-full scale-110 origin-center">
                       <SafeImage
                         src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
                         alt="SK Interior architectural statement"
@@ -629,9 +641,9 @@ export default function HomePage() {
               <div className="lg:col-span-5">
                 <SectionReveal direction="left">
                   <div className="img-cover ratio-3-4 rounded-xl shadow-luxe overflow-hidden" data-cursor="image">
-                    <div ref={approachImgRef} className="w-full h-full">
+                    <div ref={approachImgRef} className="w-full h-full scale-110 origin-center">
                       <SafeImage
-                        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+                        src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
                         alt="SK Interior Design Approach"
                         loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 ease-out"
@@ -922,43 +934,78 @@ export default function HomePage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SECTION 7 — FEATURED TESTIMONIAL (EDITORIAL SINGLE FEATURE)
+            SECTION 7 — CLIENT VOICE & REVIEWS (UNIQUE LUXURY EDITORIAL)
             ═══════════════════════════════════════════════════════════════════ */}
-        <section className="section-padding" style={{ background: 'var(--color-bg)' }}>
+        <section className="section-padding relative overflow-hidden" style={{ background: 'var(--color-bg)' }}>
           <div className="container-narrow">
             <SectionReveal>
-              <span className="section-label mb-8 block justify-center">Client Voice</span>
+              <div className="text-center mb-6">
+                <span className="section-label inline-block text-[#B59A62]">Client Voices</span>
+              </div>
 
-              <div className="text-center relative">
-                {/* Large Quotation Mark */}
-                <span
-                  className="block text-[#B59A62]/20 leading-none select-none -mb-12"
-                  style={{ fontFamily: 'var(--font-display)', fontSize: '10rem' }}
-                >
-                  &ldquo;
-                </span>
+              <div className="text-center relative bg-[#141414]/80 border border-white/10 rounded-3xl p-8 sm:p-14 shadow-2xl backdrop-blur-md group hover:border-[#B59A62]/40 transition-all duration-500">
+                
+                {/* 5-Star Rating & Verified Badge */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                  <div className="flex items-center gap-1.5 text-[#B59A62]">
+                    {[...Array(testimonials[activeTestimonial]?.rating || 5)].map((_, i) => (
+                      <svg key={i} width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                    ))}
+                    <span className="text-xs font-semibold text-[#B59A62] ml-2">5.0 / 5.0</span>
+                  </div>
+
+                  <span className="text-[9px] tracking-[0.24em] uppercase px-3 py-1 rounded-full bg-emerald-950/40 text-emerald-400 border border-emerald-500/20 font-semibold flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Verified Client Reflection
+                  </span>
+                </div>
 
                 {/* Main Quote Statement */}
                 <p
-                  className="display-md font-light text-[#F3F1ED] leading-snug mb-10"
+                  className="display-md font-light text-[#F3F1ED] leading-snug mb-10 min-h-[120px] flex items-center justify-center"
                   style={{ fontFamily: 'var(--font-display)' }}
                 >
-                  {testimonials[activeTestimonial].text}
+                  &ldquo;{testimonials[activeTestimonial]?.text}&rdquo;
                 </p>
 
-                {/* Client Metadata */}
-                <div>
-                  <h4 className="text-base text-[#F3F1ED] font-medium" style={{ fontFamily: 'var(--font-body)' }}>
-                    {testimonials[activeTestimonial].name}
+                {/* Client Profile Avatar & Metadata */}
+                <div className="mb-8 flex flex-col items-center justify-center">
+                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#B59A62] shadow-xl mb-3 bg-[#222] flex-shrink-0">
+                    {testimonials[activeTestimonial]?.avatar ? (
+                      <img
+                        src={testimonials[activeTestimonial].avatar}
+                        alt={testimonials[activeTestimonial].name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#B59A62] font-bold text-sm bg-gradient-to-br from-[#1A1917] to-[#2B2822]">
+                        {testimonials[activeTestimonial]?.avatarInitials || 'SK'}
+                      </div>
+                    )}
+                  </div>
+
+                  <h4 className="text-lg text-[#F3F1ED] font-normal" style={{ fontFamily: 'var(--font-display)' }}>
+                    {testimonials[activeTestimonial]?.name}
                   </h4>
-                  <p className="text-xs text-[#B59A62] font-light mt-1">
-                    {testimonials[activeTestimonial].loc} {testimonials[activeTestimonial].project ? `· ${testimonials[activeTestimonial].project}` : ''}
+                  <p className="text-xs text-[#B59A62] font-light mt-1 tracking-wide">
+                    {testimonials[activeTestimonial]?.loc} {testimonials[activeTestimonial]?.project ? `· ${testimonials[activeTestimonial]?.project}` : ''}
                   </p>
                 </div>
 
-                {/* Switcher Controls */}
-                {testimonials.length > 1 && (
-                  <div className="flex items-center justify-center gap-3 mt-10">
+                {/* Switcher & Navigation Controls */}
+                <div className="flex items-center justify-center gap-4 mb-8">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
+                    className="w-10 h-10 rounded-full border border-white/15 text-[#F3F1ED]/70 hover:text-[#B59A62] hover:border-[#B59A62] flex items-center justify-center transition-colors"
+                    aria-label="Previous review"
+                  >
+                    ←
+                  </button>
+
+                  <div className="flex items-center gap-2">
                     {testimonials.map((_, i) => (
                       <button
                         key={i}
@@ -971,7 +1018,34 @@ export default function HomePage() {
                       />
                     ))}
                   </div>
-                )}
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
+                    className="w-10 h-10 rounded-full border border-white/15 text-[#F3F1ED]/70 hover:text-[#B59A62] hover:border-[#B59A62] flex items-center justify-center transition-colors"
+                    aria-label="Next review"
+                  >
+                    →
+                  </button>
+                </div>
+
+                {/* Action Links to Dedicated Review Page */}
+                <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-4">
+                  <Link
+                    href="/reviews"
+                    className="px-6 py-3 rounded-xl bg-[#B59A62] text-[#111111] text-[11px] tracking-[0.22em] uppercase font-bold hover:bg-[#c4a96f] transition-all shadow-lg"
+                  >
+                    EXPLORE ALL REVIEWS ({testimonials.length}+)
+                  </Link>
+
+                  <Link
+                    href="/reviews"
+                    className="px-6 py-3 rounded-xl border border-white/20 text-[#F3F1ED] text-[11px] tracking-[0.22em] uppercase font-semibold hover:border-[#B59A62] hover:text-[#B59A62] transition-all"
+                  >
+                    + WRITE A REVIEW
+                  </Link>
+                </div>
+
               </div>
             </SectionReveal>
           </div>

@@ -46,7 +46,7 @@ export const JOURNAL_ARTICLES = [
     date: '02 August 2026',
     readTime: '8 min read',
     featured: false,
-    coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1400&q=80',
     excerpt:
       'There is no single architectural decision more consequential than how light enters and travels through a home. Mapping morning glow and controlling afternoon glare is central to residential luxury.',
     quote: {
@@ -90,7 +90,7 @@ export const JOURNAL_ARTICLES = [
     date: '28 June 2026',
     readTime: '10 min read',
     featured: false,
-    coverImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80',
+    coverImage: '/images/reviews/interior_bedroom_suite.jpg',
     excerpt:
       'Coastal architecture demands total honesty from materials. Humidity, salt air, and strong tropical light test every joint, finish, and fabric — requiring design that age gracefully with coastal elements.',
     quote: {

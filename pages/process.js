@@ -22,8 +22,7 @@ const PROCESS_STEPS = [
       'Initial spatial potential & constraint identification',
       'Budget & vision framework alignment',
     ],
-    image:
-      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=80',
+    image: '/images/image.png',
     imageAlt: 'Architectural space discovery and spatial audit for interior project',
   },
   {
@@ -40,8 +39,7 @@ const PROCESS_STEPS = [
       'Material orientation & tactile direction swatches',
       'Project scope, timeline & cost estimation strategy',
     ],
-    image:
-      'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1400&q=80',
+    image: '/images/image copy.png',
     imageAlt: 'Interior design material palette and spatial layout concept swatches',
   },
   {
@@ -58,8 +56,7 @@ const PROCESS_STEPS = [
       'Custom joinery & millwork concept sketches',
       'Architectural lighting & ceiling detail planning',
     ],
-    image:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80',
+    image: '/images/image copy 2.png',
     imageAlt: 'Luxury interior living room design visualization and materials',
   },
   {
@@ -76,8 +73,7 @@ const PROCESS_STEPS = [
       'Electrical, plumbing & HVAC coordination plans',
       'Itemised Bill of Quantities (BOQ) with fixed pricing',
     ],
-    image:
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80',
+    image: '/images/image copy 4.png',
     imageAlt: 'Technical interior architectural drawings and detailed joinery specifications',
   },
   {
@@ -94,8 +90,7 @@ const PROCESS_STEPS = [
       'White-glove deep cleaning, art curation & final styling',
       'Thorough snagging inspection & comprehensive handover pack',
     ],
-    image:
-      'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1400&q=80',
+    image: '/images/image copy 5.png',
     imageAlt: 'Completed luxury interior handover with curated art and fine styling',
   },
 ];
@@ -135,32 +130,14 @@ export default function ProcessPage() {
   useParallax(heroImgRef, 0.12);
   useParallax(cinematicImgRef, 0.15);
 
-  // Scroll observer to update active step dynamically as user scrolls
+  // Auto-advance step carousel every 4 seconds automatically without requiring user clicks
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    const timer = setInterval(() => {
+      setActiveStepIndex((prev) => (prev + 1) % PROCESS_STEPS.length);
+    }, 4000);
 
-    const handleScroll = () => {
-      const stepElements = stepRefs.current;
-      if (!stepElements || stepElements.length === 0) return;
-
-      const viewportCenter = window.innerHeight / 2.5;
-
-      stepElements.forEach((el, index) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= viewportCenter && rect.bottom >= viewportCenter) {
-          if (index !== activeStepIndex) {
-            setActiveStepIndex(index);
-          }
-        }
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeStepIndex]);
+    return () => clearInterval(timer);
+  }, []);
 
   // Synchronized step image & content transition (450–600ms)
   useEffect(() => {
@@ -197,7 +174,18 @@ export default function ProcessPage() {
           className="relative min-h-[65vh] lg:min-h-[75vh] flex flex-col justify-end overflow-hidden pb-16 lg:pb-24"
           style={{ background: 'var(--color-bg)', paddingTop: '140px' }}
         >
-          {/* Subtle Ambient Radial Glow */}
+          {/* Background Hero Image Overlay */}
+          <div className="absolute inset-0 z-0 opacity-65 overflow-hidden pointer-events-none">
+            <div ref={heroImgRef} className="w-full h-full scale-110">
+              <SafeImage
+                src="/images/image copy 3.png"
+                alt="SK Interior Design Process"
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/40 to-black/30" />
+          </div>
           <div
             className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] rounded-full pointer-events-none opacity-15 blur-[120px]"
             style={{ background: 'radial-gradient(circle, #B59A62 0%, transparent 70%)' }}
@@ -334,8 +322,8 @@ export default function ProcessPage() {
                         onClick={() => setActiveStepIndex(idx)}
                         className={`w-full text-left p-5 rounded-xl transition-all duration-300 relative group overflow-hidden border ${
                           isActive
-                            ? 'bg-[#B59A62]/10 border-[#B59A62] shadow-lg'
-                            : 'bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]'
+                            ? 'bg-[#B59A62]/15 border-[#B59A62] shadow-lg'
+                            : 'bg-white/[0.04] border-white/15 hover:border-white/30 hover:bg-white/[0.08]'
                         }`}
                         aria-selected={isActive}
                         role="tab"
@@ -352,22 +340,22 @@ export default function ProcessPage() {
                             <span
                               className={`font-mono text-sm font-semibold transition-transform duration-300 ${
                                 isActive
-                                  ? 'text-[#B59A62] scale-110'
-                                  : 'text-white/40 group-hover:text-white/70'
+                                  ? 'text-[#B59A62] scale-110 font-bold'
+                                  : 'text-white/80 group-hover:text-white'
                               }`}
                             >
                               {step.number}
                             </span>
                             <div>
                               <h3
-                                className={`text-lg font-light tracking-wide transition-colors ${
-                                  isActive ? 'text-[#F3F1ED] font-normal' : 'text-[#F3F1ED]/70 group-hover:text-[#F3F1ED]'
+                                className={`text-lg font-medium tracking-wide transition-colors ${
+                                  isActive ? 'text-white' : 'text-white/90 group-hover:text-white'
                                 }`}
                                 style={{ fontFamily: 'var(--font-display)' }}
                               >
                                 {step.title}
                               </h3>
-                              <span className="text-[9.5px] tracking-[0.2em] uppercase text-[#B59A62]/70 font-mono block mt-0.5">
+                              <span className="text-[10.5px] tracking-[0.2em] uppercase text-[#B59A62] font-semibold block mt-0.5">
                                 {step.phaseLabel}
                               </span>
                             </div>
@@ -383,7 +371,7 @@ export default function ProcessPage() {
                             className={`transition-all duration-300 ${
                               isActive
                                 ? 'text-[#B59A62] translate-x-1'
-                                : 'text-white/30 group-hover:text-white/80'
+                                : 'text-white/60 group-hover:text-white'
                             }`}
                           >
                             <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
@@ -454,7 +442,7 @@ export default function ProcessPage() {
                   </div>
 
                   <p
-                    className="text-[15px] sm:text-[16px] leading-relaxed text-[#F3F1ED]/75 font-light mb-6"
+                    className="text-[15px] sm:text-[16px] leading-relaxed text-white/85 font-light mb-6"
                     style={{ fontFamily: 'var(--font-body)' }}
                   >
                     {displayedStep.description}
@@ -469,7 +457,7 @@ export default function ProcessPage() {
                       {displayedStep.keyPoints.map((pt, pIdx) => (
                         <div
                           key={pIdx}
-                          className="flex items-start gap-2.5 text-[13px] text-[#F3F1ED]/80 font-light"
+                          className="flex items-start gap-2.5 text-[13px] text-white/90 font-light"
                           style={{ fontFamily: 'var(--font-body)' }}
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-[#B59A62] mt-2 flex-shrink-0" />
@@ -480,20 +468,6 @@ export default function ProcessPage() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Scrollable trigger anchors for observing scroll position */}
-            <div className="mt-20 space-y-32">
-              {PROCESS_STEPS.map((step, idx) => (
-                <div
-                  key={step.id}
-                  ref={(el) => (stepRefs.current[idx] = el)}
-                  className="py-12 border-t border-white/5 flex items-center justify-between text-xs text-white/20 font-mono"
-                >
-                  <span>MILESTONE {step.number} — {step.title}</span>
-                  <span>{idx + 1} OF 5</span>
-                </div>
-              ))}
             </div>
           </div>
         </section>
@@ -600,7 +574,7 @@ export default function ProcessPage() {
               <div className="relative ratio-21-9 sm:ratio-16-9 lg:ratio-21-9 rounded-2xl overflow-hidden shadow-strong border border-white/10 group">
                 <div ref={cinematicImgRef} className="w-full h-full">
                   <SafeImage
-                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80"
+                    src="/images/image copy.png"
                     alt="From planning to reality — SK Interior architectural space"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   />

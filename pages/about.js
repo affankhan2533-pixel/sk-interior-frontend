@@ -22,7 +22,7 @@ const DESIGN_PRINCIPLES = [
     title: 'FUNCTION',
     subtitle: 'Effortless Living & Spatial Flow',
     body: 'Beautiful spaces must work effortlessly. Layouts are engineered around daily rituals, intuitive circulation, and integrated storage.',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80',
+    image: '/images/reviews/interior_bedroom_suite.jpg',
   },
   {
     id: 'materiality',
@@ -46,7 +46,7 @@ const DESIGN_PRINCIPLES = [
     title: 'EMOTION',
     subtitle: 'Atmosphere & Sensory Quietness',
     body: 'The strongest spaces leave a lasting feeling — creating a sense of quiet sanctuary that supports daily life.',
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80',
+    image: '/images/reviews/altitude_penthouse.jpg',
   },
 ];
 
@@ -120,17 +120,21 @@ export default function AboutPage() {
             PHASE 2 & 3 — EDITORIAL CINEMATIC ABOUT HERO
             ═══════════════════════════════════════════════════════════════════ */}
         <section
-          className="relative min-h-[60vh] lg:min-h-[70vh] flex flex-col justify-end overflow-hidden pb-16 lg:pb-24"
+          className="relative min-h-[65vh] lg:min-h-[75vh] flex flex-col justify-end overflow-hidden pb-16 lg:pb-24"
           style={{ background: 'var(--color-bg)', paddingTop: '140px' }}
         >
-          {/* Subtle Ambient Radial Grid */}
-          <div
-            className="absolute inset-0 z-0 opacity-15 pointer-events-none"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle at 50% 50%, rgba(181, 154, 98, 0.12) 0%, transparent 70%)',
-            }}
-          />
+          {/* Background Hero Image Overlay */}
+          <div className="absolute inset-0 z-0 opacity-65 overflow-hidden pointer-events-none">
+            <div ref={heroImgRef} className="w-full h-full scale-110">
+              <SafeImage
+                src="/images/image.png"
+                alt="SK Interior Design Studio Architecture"
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/40 to-black/30" />
+          </div>
 
           <div className="container-wide relative z-10">
             <SectionReveal direction="up">
@@ -555,7 +559,7 @@ export default function AboutPage() {
               <div className="relative ratio-21-9 sm:ratio-16-9 lg:ratio-21-9 rounded-2xl overflow-hidden shadow-strong border border-white/10 group">
                 <div ref={cinematicImgRef} className="w-full h-full">
                   <SafeImage
-                    src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80"
+                    src="/images/reviews/santacruz_residence.jpg"
                     alt="SK Interior architectural editorial moment"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   />

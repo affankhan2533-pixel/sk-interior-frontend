@@ -158,9 +158,6 @@ export default function Footer() {
                 <a href="tel:9870760240" className="text-[#F3F1ED]/60 hover:text-[#B59A62] transition-colors block">
                   98707 60240
                 </a>
-                <a href="tel:9167401020" className="text-[#F3F1ED]/60 hover:text-[#B59A62] transition-colors block">
-                  091674 01020
-                </a>
               </div>
               <div>
                 <p className="text-[#F3F1ED]/30 text-[9.5px] uppercase tracking-[0.18em] mb-1">Email</p>

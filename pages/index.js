@@ -3,11 +3,16 @@ import Link from 'next/link';
 import axios from 'axios';
 import SEO from '../components/SEO';
 import SectionReveal from '../components/SectionReveal';
+<<<<<<< HEAD
 import MagneticBtn from '../components/MagneticBtn';
 import SafeImage from '../components/SafeImage';
 import useParallax from '../lib/useParallax';
 import { API, BACKEND, HERO_FALLBACK_IMAGE, resolveImageSrc } from '../lib/api';
 import { PROJECTS } from '../data/projects';
+=======
+import ProjectCard from '../components/ProjectCard';
+import { API, BACKEND, resolveImageSrc } from '../lib/api';
+>>>>>>> upstream/main
 
 const DEFAULT_SLIDES = [
   {
@@ -147,10 +152,16 @@ const PROCESS_STEPS = [
   },
 ];
 
-export default function HomePage() {
-  const [heroSlides, setHeroSlides] = useState([]);
+export default function HomePage({
+  initialProjects = [],
+  initialHeroSlides = [],
+  initialTestimonials = null,
+}) {
+  const [heroSlides, setHeroSlides] = useState(initialHeroSlides);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [testimonials, setTestimonials] = useState(DEFAULT_TESTIMONIALS);
+  const [testimonials, setTestimonials] = useState(initialTestimonials || DEFAULT_TESTIMONIALS);
+  const [projects, setProjects] = useState(initialProjects);
+  const [projectsLoading, setProjectsLoading] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeService, setActiveService] = useState(0);
   const [heroReady, setHeroReady] = useState(true);
@@ -179,6 +190,7 @@ export default function HomePage() {
   useParallax(approachImgRef, 0.12);
   useParallax(ctaBgRef, 0.15);
 
+<<<<<<< HEAD
   useEffect(() => {
     axios
       .get(`${API}/hero`)
@@ -214,6 +226,16 @@ export default function HomePage() {
     const t = setTimeout(() => setHeroReady(true), delay);
     return () => clearTimeout(t);
   }, []);
+=======
+  const slides = heroSlides.length ? heroSlides : DEFAULT_SLIDES;
+
+  // Selected works: prioritize featured projects, fallback to latest projects in DB
+  const featuredProjects = projects.filter((p) => p.featured);
+  const displayedProjects =
+    featuredProjects.length > 0
+      ? featuredProjects.slice(0, 3)
+      : projects.slice(0, 3);
+>>>>>>> upstream/main
 
   // Auto-advance hero slides
   useEffect(() => {
@@ -318,7 +340,7 @@ export default function HomePage() {
     <>
       <SEO
         title="Luxury Interior Design Studio, Mumbai"
-        description="SK Interior is a premium interior design and architecture studio in Santacruz, Mumbai. Specialising in residential, commercial, and hospitality interiors."
+        description="SK Interior is a premium interior design and architecture studio in BKC, Mumbai. Specialising in residential, commercial, and hospitality interiors."
         canonical="/"
       />
 
@@ -367,12 +389,17 @@ export default function HomePage() {
             style={{ transform: `translate3d(0, ${heroTransform.contentTranslateY}px, 0)` }}
           >
             <div className="max-w-4xl">
+<<<<<<< HEAD
               <span
                 className={`section-label text-[#B59A62] mb-6 block transition-all duration-700 ${
                   heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                 }`}
               >
                 Santacruz · Mumbai
+=======
+              <span className="section-label text-[#B59A62] mb-6 block">
+                BKC · Mumbai
+>>>>>>> upstream/main
               </span>
 
               {/* Original Approved Editorial Headline */}
@@ -514,7 +541,7 @@ export default function HomePage() {
                   {/* Subtle decorative badge */}
                   <div className="absolute -bottom-6 -left-6 bg-[#111111] text-[#F3F1ED] p-6 rounded-lg hidden sm:block shadow-strong">
                     <p className="text-[9px] tracking-[0.26em] uppercase text-[#B59A62] font-semibold mb-1">
-                      Santacruz Studio
+                      BKC Studio
                     </p>
                     <p className="text-xs font-light text-[#F3F1ED]/70" style={{ fontFamily: 'var(--font-body)' }}>
                       Est. 2015 · Mumbai
@@ -559,6 +586,7 @@ export default function HomePage() {
               </SectionReveal>
             </div>
 
+<<<<<<< HEAD
             {/* 3 Major Editorial Project Features */}
             <div className="space-y-20">
               {PROJECTS.slice(0, 3).map((project, idx) => (
@@ -622,11 +650,117 @@ export default function HomePage() {
                         </span>
                       </div>
 
+=======
+            {/* Editorial Project Features from Database */}
+            {projectsLoading ? (
+              <div className="space-y-16">
+                {[1, 2].map((n) => (
+                  <div key={n} className="animate-pulse grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div className="lg:col-span-8 bg-white/5 rounded-xl aspect-[16/9]" />
+                    <div className="lg:col-span-4 space-y-4">
+                      <div className="h-4 bg-white/10 rounded w-1/4" />
+                      <div className="h-8 bg-white/10 rounded w-3/4" />
+                      <div className="h-4 bg-white/10 rounded w-1/2" />
+                      <div className="h-16 bg-white/10 rounded w-full" />
+>>>>>>> upstream/main
                     </div>
-                  </Link>
-                </SectionReveal>
-              ))}
-            </div>
+                  </div>
+                ))}
+              </div>
+            ) : displayedProjects.length === 0 ? (
+              <div className="text-center py-20 bg-white/[0.03] border border-white/10 rounded-2xl p-8 max-w-lg mx-auto">
+                <p className="text-sm font-light text-[#F3F1ED]/60 mb-6">
+                  No projects published yet. Check our complete portfolio or reach out for inquiries.
+                </p>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[11px] tracking-[0.2em] uppercase font-semibold bg-[#B59A62] text-[#111111]"
+                >
+                  Contact Studio
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-20">
+                {displayedProjects.map((project, idx) => {
+                  const slugOrId = project.slug || project._id;
+                  const cover = resolveImageSrc(project.imageUrl);
+                  const projectNum = String(idx + 1).padStart(2, '0');
+                  const category = project.category
+                    ? project.category.charAt(0).toUpperCase() + project.category.slice(1)
+                    : 'Portfolio';
+                  const metaString = [project.location, project.year].filter(Boolean).join(' · ');
+
+                  return (
+                    <SectionReveal key={project._id || project.slug} delay={idx * 100}>
+                      <Link href={`/projects/${slugOrId}`} className="group block">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                          
+                          {/* Image Column - Alternating width layout */}
+                          <div className={`lg:col-span-8 ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
+                            <div className="img-cover ratio-16-9 rounded-xl overflow-hidden bg-black/40">
+                              <img
+                                src={cover}
+                                alt={project.title}
+                                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Info Column */}
+                          <div className={`lg:col-span-4 ${idx % 2 === 1 ? 'lg:order-1' : ''}`}>
+                            <div className="flex items-center gap-4 mb-4">
+                              <span
+                                className="text-[#B59A62] text-xl font-light"
+                                style={{ fontFamily: 'var(--font-display)' }}
+                              >
+                                {projectNum}
+                              </span>
+                              <span className="text-white/20">•</span>
+                              <span className="text-[10px] tracking-[0.24em] uppercase font-semibold text-[#B59A62]">
+                                {category}
+                              </span>
+                            </div>
+
+                            <h3
+                              className="text-[2.2rem] sm:text-[2.8rem] font-light text-[#F3F1ED] group-hover:text-[#B59A62] transition-colors duration-300 leading-tight mb-4"
+                              style={{ fontFamily: 'var(--font-display)' }}
+                            >
+                              {project.title}
+                            </h3>
+
+                            {metaString && (
+                              <p
+                                className="text-xs tracking-wider uppercase text-[#F3F1ED]/40 font-light mb-6"
+                                style={{ fontFamily: 'var(--font-body)' }}
+                              >
+                                {metaString}
+                              </p>
+                            )}
+
+                            {project.description && (
+                              <p
+                                className="text-sm leading-relaxed text-[#F3F1ED]/60 font-light line-clamp-3 mb-8"
+                                style={{ fontFamily: 'var(--font-body)' }}
+                              >
+                                {project.description}
+                              </p>
+                            )}
+
+                            <span className="arrow-btn text-[#F3F1ED] group-hover:text-[#B59A62] transition-colors">
+                              Explore Case Study
+                              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </span>
+                          </div>
+
+                        </div>
+                      </Link>
+                    </SectionReveal>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
@@ -936,6 +1070,7 @@ export default function HomePage() {
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 7 — CLIENT VOICE & REVIEWS (UNIQUE LUXURY EDITORIAL)
             ═══════════════════════════════════════════════════════════════════ */}
+<<<<<<< HEAD
         <section className="section-padding relative overflow-hidden" style={{ background: 'var(--color-bg)' }}>
           <div className="container-narrow">
             <SectionReveal>
@@ -991,9 +1126,32 @@ export default function HomePage() {
                   </h4>
                   <p className="text-xs text-[#B59A62] font-light mt-1 tracking-wide">
                     {testimonials[activeTestimonial]?.loc} {testimonials[activeTestimonial]?.project ? `· ${testimonials[activeTestimonial]?.project}` : ''}
-                  </p>
-                </div>
+=======
+        {testimonials && testimonials.length > 0 && (
+          <section className="section-padding" style={{ background: 'var(--color-bg)' }}>
+            <div className="container-narrow">
+              <SectionReveal>
+                <span className="section-label mb-8 block justify-center">Client Voice</span>
 
+                <div className="text-center relative">
+                  {/* Large Quotation Mark */}
+                  <span
+                    className="block text-[#B59A62]/20 leading-none select-none -mb-12"
+                    style={{ fontFamily: 'var(--font-display)', fontSize: '10rem' }}
+                  >
+                    &ldquo;
+                  </span>
+
+                  {/* Main Quote Statement */}
+                  <p
+                    className="display-md font-light text-[#F3F1ED] leading-snug mb-10"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    {(testimonials[activeTestimonial] || testimonials[0])?.text}
+>>>>>>> upstream/main
+                  </p>
+
+<<<<<<< HEAD
                 {/* Switcher & Navigation Controls */}
                 <div className="flex items-center justify-center gap-4 mb-8">
                   <button
@@ -1050,6 +1208,42 @@ export default function HomePage() {
             </SectionReveal>
           </div>
         </section>
+=======
+                  {/* Client Metadata */}
+                  <div>
+                    <h4 className="text-base text-[#F3F1ED] font-medium" style={{ fontFamily: 'var(--font-body)' }}>
+                      {(testimonials[activeTestimonial] || testimonials[0])?.name}
+                    </h4>
+                    <p className="text-xs text-[#B59A62] font-light mt-1">
+                      {(testimonials[activeTestimonial] || testimonials[0])?.loc}{' '}
+                      {(testimonials[activeTestimonial] || testimonials[0])?.project
+                        ? `· ${(testimonials[activeTestimonial] || testimonials[0])?.project}`
+                        : ''}
+                    </p>
+                  </div>
+
+                  {/* Switcher Controls */}
+                  {testimonials.length > 1 && (
+                    <div className="flex items-center justify-center gap-3 mt-10">
+                      {testimonials.map((_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          aria-label={`View testimonial ${i + 1}`}
+                          onClick={() => setActiveTestimonial(i)}
+                          className={`h-1.5 rounded-full transition-all duration-300 ${
+                            i === activeTestimonial ? 'w-8 bg-[#B59A62]' : 'w-2 bg-white/20'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </SectionReveal>
+            </div>
+          </section>
+        )}
+>>>>>>> upstream/main
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 8 — FINAL PROJECT CTA (CINEMATIC ENDING)
@@ -1121,4 +1315,46 @@ export default function HomePage() {
       </main>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const backend = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
+  let initialProjects = [];
+  let initialHeroSlides = [];
+  let initialTestimonials = null;
+
+  try {
+    const [pRes, hRes, tRes] = await Promise.allSettled([
+      axios.get(`${backend}/gallery`),
+      axios.get(`${backend}/hero`),
+      axios.get(`${backend}/testimonials`),
+    ]);
+
+    if (pRes.status === 'fulfilled' && Array.isArray(pRes.value.data)) {
+      initialProjects = pRes.value.data;
+    }
+
+    if (hRes.status === 'fulfilled' && Array.isArray(hRes.value.data) && hRes.value.data.length > 0) {
+      initialHeroSlides = hRes.value.data.map((s) => ({
+        imageUrl: s.imageUrl?.startsWith('/uploads') ? `${backendUrl}${s.imageUrl}` : s.imageUrl,
+        alt: s.alt || 'SK Interior',
+      }));
+    }
+
+    if (tRes.status === 'fulfilled' && Array.isArray(tRes.value.data) && tRes.value.data.length > 0) {
+      initialTestimonials = tRes.value.data;
+    }
+  } catch (err) {
+    console.error('Error in HomePage getServerSideProps:', err);
+  }
+
+  return {
+    props: {
+      initialProjects,
+      initialHeroSlides,
+      initialTestimonials,
+    },
+  };
 }

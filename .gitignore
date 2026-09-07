@@ -1,6 +1,10 @@
 .env
 node_modules
 .env.local
+<<<<<<< HEAD
 .next
 .DS_Store
 *.log
+=======
+.next
+>>>>>>> upstream/main

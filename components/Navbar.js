@@ -87,7 +87,7 @@ export default function Navbar() {
                 className="text-[8px] sm:text-[9px] tracking-[0.32em] uppercase font-bold text-[#B59A62] mt-[-2px] block"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                STUDIO · SANTACRUZ, MUMBAI
+                STUDIO · BKC, MUMBAI
               </span>
             </Link>
 
@@ -228,7 +228,7 @@ export default function Navbar() {
 
         {/* Footer in mobile menu */}
         <div className="px-8 pb-10 text-[#F3F1ED]/40 text-[10px] tracking-[0.2em] uppercase font-semibold">
-          <p>hello@skinterior.in · 98707 60240</p>
+          <p>skinteriordesigner90@gmail.com · 98707 60240</p>
         </div>
       </div>
     </>

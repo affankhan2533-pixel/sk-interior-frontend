@@ -149,8 +149,8 @@ export default function Footer() {
               <div>
                 <p className="text-[#F3F1ED]/30 text-[9.5px] uppercase tracking-[0.18em] mb-1">Address</p>
                 <p className="text-[#F3F1ED]/60 leading-relaxed">
-                  25-B, New Kantwadi Rd,<br />
-                  Santacruz West, Mumbai 400054
+                  1012, Commercial Tower,<br />
+                  Near Trade Centre, BKC, Mumbai
                 </p>
               </div>
               <div>
@@ -165,10 +165,10 @@ export default function Footer() {
               <div>
                 <p className="text-[#F3F1ED]/30 text-[9.5px] uppercase tracking-[0.18em] mb-1">Email</p>
                 <a
-                  href="mailto:hello@skinterior.in"
+                  href="mailto:skinteriordesigner90@gmail.com"
                   className="text-[#F3F1ED]/60 hover:text-[#B59A62] transition-colors"
                 >
-                  hello@skinterior.in
+                  skinteriordesigner90@gmail.com
                 </a>
               </div>
               <div>

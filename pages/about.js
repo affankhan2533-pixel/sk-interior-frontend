@@ -50,26 +50,8 @@ const DESIGN_PRINCIPLES = [
   },
 ];
 
-const TEAM_MEMBERS = [
-  {
-    name: 'Simran Kapoor',
-    role: 'Principal Designer & Founder',
-    bio: 'Leads spatial design direction and material philosophy across all residential and hospitality commissions.',
-  },
-  {
-    name: 'Rohit Shenoy',
-    role: 'Head of Project Delivery',
-    bio: 'Oversees site execution, technical drawings, and craftsman coordination across active sites in Mumbai.',
-  },
-  {
-    name: 'Anika Mehta',
-    role: 'Senior Interior Architect',
-    bio: 'Specialises in custom joinery detail, stone specification, and lighting plans.',
-  },
-];
-
 const STUDIO_FACTS = [
-  { label: 'Based In', value: 'Santacruz, Mumbai' },
+  { label: 'Based In', value: 'BKC, Mumbai' },
   { label: 'Practice Areas', value: 'Residential · Commercial · Hospitality' },
   { label: 'Design Approach', value: 'Bespoke Interior Architecture' },
   { label: 'Project Scope', value: 'Turnkey Delivery & Material Advisory' },
@@ -110,8 +92,13 @@ export default function AboutPage() {
   return (
     <>
       <SEO
+<<<<<<< HEAD
         title="About Studio — Our Story & Philosophy"
         description="SK Interior is a luxury interior architecture practice in Santacruz, Mumbai. Learn about our studio story, design principles, and approach."
+=======
+        title="About Studio — Our Philosophy & Approach"
+        description="SK Interior is a luxury interior architecture practice in BKC, Mumbai. Learn about our studio story, design principles, and approach."
+>>>>>>> upstream/main
         canonical="/about"
       />
 
@@ -123,6 +110,7 @@ export default function AboutPage() {
           className="relative min-h-[65vh] lg:min-h-[75vh] flex flex-col justify-end overflow-hidden pb-16 lg:pb-24"
           style={{ background: 'var(--color-bg)', paddingTop: '140px' }}
         >
+<<<<<<< HEAD
           {/* Background Hero Image Overlay */}
           <div className="absolute inset-0 z-0 opacity-65 overflow-hidden pointer-events-none">
             <div ref={heroImgRef} className="w-full h-full scale-110">
@@ -132,6 +120,34 @@ export default function AboutPage() {
                 className="w-full h-full object-cover"
                 loading="eager"
               />
+=======
+          <div className="container-wide section-padding-sm">
+            <span className="section-label text-[#B59A62] mb-6 block">
+              THE STUDIO
+            </span>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_0.9fr] gap-8 lg:gap-16 items-end">
+              <div>
+                <h1
+                  className="display-xl text-[#F3F1ED] uppercase"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  DESIGN WITH<br />
+                  <span className="text-italic-serif text-[#B59A62]">
+                    A POINT OF VIEW.
+                  </span>
+                </h1>
+              </div>
+
+              <div>
+                <p
+                  className="text-[14.5px] sm:text-[16px] leading-relaxed text-[#F3F1ED]/60 font-light max-w-lg"
+                  style={{ fontFamily: 'var(--font-body)' }}
+                >
+                  SK Interior was established in BKC, Mumbai as an interior architecture studio dedicated to spatial restraint, authentic materials, and long-term thinking.
+                </p>
+              </div>
+>>>>>>> upstream/main
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/40 to-black/30" />
           </div>
@@ -231,7 +247,11 @@ export default function AboutPage() {
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
+<<<<<<< HEAD
             PHASE 5, 6 & 7 — INTERACTIVE STUDIO PHILOSOPHY / DESIGN PRINCIPLES
+=======
+            SECTION 6 — STUDIO DETAILS
+>>>>>>> upstream/main
             ═══════════════════════════════════════════════════════════════════ */}
         {/* DESKTOP INTERACTIVE PHILOSOPHY (lg and above) */}
         <section
@@ -239,6 +259,7 @@ export default function AboutPage() {
           style={{ background: 'var(--color-bg-alt)' }}
         >
           <div className="container-wide">
+<<<<<<< HEAD
             {/* Section Header */}
             <div className="flex items-center justify-between mb-12 pb-6 border-b border-white/10">
               <div>
@@ -534,6 +555,10 @@ export default function AboutPage() {
             {/* Phase 11 — Verified Studio Details */}
             <div className="pt-12 border-t border-black/15">
               <span className="section-label mb-8 block text-[#B59A62]">STUDIO OVERVIEW</span>
+=======
+            <SectionReveal>
+              <span className="section-label mb-8 block">STUDIO OVERVIEW</span>
+>>>>>>> upstream/main
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-[13px]">
                 {STUDIO_FACTS.map((fact) => (
                   <div key={fact.label}>
@@ -546,7 +571,7 @@ export default function AboutPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </SectionReveal>
           </div>
         </section>
 

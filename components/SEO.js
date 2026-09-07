@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 const SITE_NAME = 'SK Interior';
 const DEFAULT_DESCRIPTION =
-  'SK Interior is a premium interior design and architecture studio in Santacruz, Mumbai. Specialising in residential, commercial, and hospitality projects.';
+  'SK Interior is a premium interior design and architecture studio in BKC, Mumbai. Specialising in residential, commercial, and hospitality projects.';
 const DEFAULT_OG_IMAGE = 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80';
 const CANONICAL_BASE = 'https://skinterior.in';
 

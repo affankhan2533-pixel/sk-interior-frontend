@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import SEO from '../../components/SEO';
+import SafeImage from '../../components/SafeImage';
 import ProjectCard from '../../components/ProjectCard';
 import SectionReveal from '../../components/SectionReveal';
+import MagneticBtn from '../../components/MagneticBtn';
+import { PROJECTS, PROJECT_CATEGORIES } from '../../data/projects';
 import { API } from '../../lib/api';
 
 export default function ProjectsPage({ initialProjects = [], initialError = null }) {
@@ -11,6 +14,48 @@ export default function ProjectsPage({ initialProjects = [], initialError = null
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(initialError);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [isFiltering, setIsFiltering] = useState(false);
+  const [heroTransform, setHeroTransform] = useState({ translateY: 0, opacity: 1 });
+  const [heroReady, setHeroReady] = useState(true);
+
+  // Hero scroll response
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let rafId = null;
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      if (scrollY <= 600) {
+        const progress = Math.min(scrollY / 600, 1);
+        setHeroTransform({
+          translateY: -progress * 25,
+          opacity: 1 - progress * 0.15,
+        });
+      }
+      rafId = null;
+    };
+
+    const onScroll = () => {
+      if (!rafId) rafId = requestAnimationFrame(handleScroll);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  // Filter change handler with smooth fade transition
+  const handleCategoryChange = (category) => {
+    if (category === activeCategory) return;
+    setIsFiltering(true);
+    setTimeout(() => {
+      setActiveCategory(category);
+      setIsFiltering(false);
+    }, 250);
+  };
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -57,16 +102,41 @@ export default function ProjectsPage({ initialProjects = [], initialError = null
       <main className="overflow-x-hidden">
         {/* ── Hero Section ── */}
         <section
-          className="relative min-h-[45vh] lg:min-h-[50vh] flex flex-col justify-end"
-          style={{ background: 'var(--color-bg)', paddingTop: '130px' }}
+          className="relative min-h-[55vh] lg:min-h-[65vh] flex flex-col justify-end overflow-hidden pb-12 transition-transform duration-300 ease-out"
+          style={{
+            background: 'var(--color-bg)',
+            paddingTop: '140px',
+            transform: `translate3d(0, ${heroTransform.translateY}px, 0)`,
+            opacity: heroTransform.opacity,
+          }}
         >
-          <div className="container-wide section-padding-sm">
-            <span className="section-label text-[#B59A62] mb-6 block">
+          {/* Background Hero Image Overlay */}
+          <div className="absolute inset-0 z-0 opacity-65 overflow-hidden pointer-events-none">
+            <div className="w-full h-full scale-110">
+              <SafeImage
+                src="/images/image copy 2.png"
+                alt="SK Interior Portfolio Projects"
+                className="w-full h-full object-cover"
+                loading="eager"
+              />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/40 to-black/30" />
+          </div>
+
+          <div className="container-wide section-padding-sm relative z-10">
+            <span
+              className={`section-label text-[#B59A62] mb-6 block transition-all duration-700 ${
+                heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+            >
               SELECTED PORTFOLIO
             </span>
+
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
               <h1
-                className="display-xl text-[#F3F1ED] max-w-[800px] uppercase"
+                className={`display-xl text-[#F3F1ED] max-w-[800px] uppercase transition-all duration-1000 delay-150 ${
+                  heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                }`}
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 SPACES WITH<br />
@@ -75,7 +145,9 @@ export default function ProjectsPage({ initialProjects = [], initialError = null
                 </span>
               </h1>
               <p
-                className="max-w-md text-[14.5px] sm:text-[15.5px] leading-relaxed text-[#F3F1ED]/55 font-light"
+                className={`max-w-md text-[14.5px] sm:text-[15.5px] leading-relaxed text-[#F3F1ED]/55 font-light transition-all duration-1000 delay-300 ${
+                  heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                }`}
                 style={{ fontFamily: 'var(--font-body)' }}
               >
                 A curated selection of residential residences, commercial workplaces, and hospitality environments designed with restraint and built to endure.
@@ -190,23 +262,41 @@ export default function ProjectsPage({ initialProjects = [], initialError = null
         {/* ── Final Project Enquiry CTA ── */}
         <section className="section-padding text-center" style={{ background: 'var(--color-bg)' }}>
           <div className="container-narrow">
-            <span className="section-label justify-center mb-8 block text-[#B59A62]">Start Your Journey</span>
-            <h2 className="display-lg text-[#F3F1ED]">
-              Have a project<br />
-              <span className="text-italic-serif text-[#B59A62]">in mind?</span>
-            </h2>
-            <p className="mt-8 text-[15px] leading-relaxed text-[#F3F1ED]/45 font-light max-w-lg mx-auto" style={{ fontFamily: 'var(--font-body)' }}>
-              Let&rsquo;s discuss how we can transform your space into a sanctuary of refined elegance.
-            </p>
-            <div className="mt-10">
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center min-h-[44px] px-8 py-4 rounded-full text-[10.5px] tracking-[0.24em] uppercase font-semibold transition-all hover:-translate-y-px"
-                style={{ background: 'var(--color-gold)', color: '#111111' }}
-              >
-                Schedule Consultation
-              </Link>
-            </div>
+            <SectionReveal>
+              <span className="section-label justify-center mb-8 block text-[#B59A62]">Start Your Journey</span>
+              <h2 className="display-lg text-[#F3F1ED]">
+                Have a project<br />
+                <span className="text-italic-serif text-[#B59A62]">in mind?</span>
+              </h2>
+              <p className="mt-8 text-[15px] leading-relaxed text-[#F3F1ED]/45 font-light max-w-lg mx-auto" style={{ fontFamily: 'var(--font-body)' }}>
+                Let&rsquo;s discuss how we can transform your space into a sanctuary of refined elegance.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <MagneticBtn>
+                  <Link
+                    href="/contact"
+                    className="btn-arch btn-arch-primary min-w-[220px]"
+                  >
+                    <span>SCHEDULE CONSULTATION</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" className="btn-arch-arrow">
+                      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </MagneticBtn>
+
+                <MagneticBtn>
+                  <Link
+                    href="/services"
+                    className="btn-arch btn-arch-secondary min-w-[220px]"
+                  >
+                    <span>EXPLORE SERVICES</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" className="btn-arch-arrow">
+                      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </MagneticBtn>
+              </div>
+            </SectionReveal>
           </div>
         </section>
       </main>

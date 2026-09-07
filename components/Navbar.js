@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { href: '/services', label: 'Services' },
   { href: '/projects', label: 'Projects' },
   { href: '/process', label: 'Process' },
+  { href: '/reviews', label: 'Reviews' },
   { href: '/journal', label: 'Journal' },
 ];
 
@@ -118,9 +119,9 @@ export default function Navbar() {
               {/* CTA — Desktop */}
               <Link
                 href="/contact"
-                className="hidden lg:inline-flex items-center justify-center px-6 py-2.5 rounded-full border border-[#B59A62]/60 text-[#F3F1ED] text-[9.5px] tracking-[0.24em] uppercase font-bold hover:bg-[#B59A62] hover:text-[#111111] hover:border-[#B59A62] transition-all duration-300 shadow-md"
+                className="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-[#B59A62]/60 text-[#F3F1ED] text-[9.5px] tracking-[0.22em] uppercase font-semibold hover:bg-[#B59A62] hover:text-[#111111] hover:border-[#B59A62] transition-all duration-300 shadow-md"
               >
-                Start a Project
+                <span>START A PROJECT</span>
               </Link>
 
               {/* Hamburger — Mobile/Tablet */}

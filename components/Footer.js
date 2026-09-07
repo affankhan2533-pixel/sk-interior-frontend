@@ -6,6 +6,7 @@ const FOOTER_PAGES = [
   { href: '/services', label: 'Services' },
   { href: '/projects', label: 'Projects' },
   { href: '/process', label: 'Process' },
+  { href: '/reviews', label: 'Reviews' },
   { href: '/journal', label: 'Journal' },
   { href: '/contact', label: 'Contact' },
 ];

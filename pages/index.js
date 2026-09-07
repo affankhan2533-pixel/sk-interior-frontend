@@ -1,25 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import SEO from '../components/SEO';
 import SectionReveal from '../components/SectionReveal';
+import MagneticBtn from '../components/MagneticBtn';
+import SafeImage from '../components/SafeImage';
 import ProjectCard from '../components/ProjectCard';
-import { API, BACKEND, resolveImageSrc } from '../lib/api';
+import useParallax from '../lib/useParallax';
+import { API, BACKEND, HERO_FALLBACK_IMAGE, resolveImageSrc } from '../lib/api';
+import { PROJECTS } from '../data/projects';
 
 const DEFAULT_SLIDES = [
   {
-    imageUrl:
-      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80',
     alt: 'Santacruz Residence — SK Interior',
   },
   {
-    imageUrl:
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80',
+    imageUrl: '/images/reviews/altitude_penthouse.jpg',
     alt: 'Altitude Penthouse — SK Interior',
   },
   {
-    imageUrl:
-      'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1920&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1920&q=80',
     alt: 'Merit Office Campus — SK Interior',
   },
 ];
@@ -27,21 +28,33 @@ const DEFAULT_SLIDES = [
 const DEFAULT_TESTIMONIALS = [
   {
     name: 'Vikram & Radhika Mehta',
-    loc: 'Santacruz, Mumbai',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+    avatarInitials: 'VM',
+    loc: 'Santacruz West, Mumbai',
     text: 'SK Interior transformed our 3,200 sq ft apartment into a sanctuary of calm. Simran’s eye for material relationships and restraint created a space that feels deeply personal, quiet, and effortlessly luxurious.',
     project: 'The Santacruz Residence',
+    roomPhoto: '/images/reviews/santacruz_residence.jpg',
+    rating: 5,
   },
   {
     name: 'Siddharth Singhania',
-    loc: 'Worli, Mumbai',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
+    avatarInitials: 'SS',
+    loc: 'Worli Sea Face, Mumbai',
     text: 'The altitude penthouse demanded a design that respected the sea view without feeling like a glass showroom. The dark walnut joinery and smoked oak flooring ground the space masterfully.',
     project: 'Altitude Penthouse',
+    roomPhoto: '/images/reviews/altitude_penthouse.jpg',
+    rating: 5,
   },
   {
     name: 'Tarun & Meera Grover',
-    loc: 'Alibaug',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=250&q=80',
+    avatarInitials: 'TG',
+    loc: 'Alibaug Coast',
     text: 'Living in our Alibaug villa feels like floating between the interior and the landscape. The marine-grade teak and Kota stone age beautifully under coastal light.',
     project: 'The Sea Villa',
+    roomPhoto: '/images/reviews/interior_bedroom_suite.jpg',
+    rating: 5,
   },
 ];
 
@@ -79,8 +92,7 @@ const SERVICE_CATEGORIES = [
     subtitle: 'Private Residences, Pent-houses & Coastal Villas',
     description:
       'End-to-end spatial planning, material curation, custom joinery, and interior architecture for high-end homes designed around how you live.',
-    image:
-      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
+    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
     link: '/services',
   },
   {
@@ -89,8 +101,7 @@ const SERVICE_CATEGORIES = [
     subtitle: 'Headquarters, Executive Suites & Creative Workplaces',
     description:
       'Brand-aligned office environments and executive suites that foster focus, collaboration, and quiet prestige.',
-    image:
-      'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80',
+    image: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80',
     link: '/services',
   },
   {
@@ -99,8 +110,7 @@ const SERVICE_CATEGORIES = [
     subtitle: 'Boutique Hotels, Fine Dining & Lifestyle Spaces',
     description:
       'Atmospheric hospitality design where lighting, acoustics, and tactile surfaces combine to create unforgettable guest experiences.',
-    image:
-      'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80',
+    image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80',
     link: '/services',
   },
 ];
@@ -150,9 +160,67 @@ export default function HomePage({
   const [projectsLoading, setProjectsLoading] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [activeService, setActiveService] = useState(0);
-  const [consultModalOpen, setConsultModalOpen] = useState(false);
+  const [heroReady, setHeroReady] = useState(true);
+
+  // Scroll Progress States
+  const [processProgress, setProcessProgress] = useState(0);
+  const [selectedWorksProgress, setSelectedWorksProgress] = useState(0);
+
+  // Hero Scroll-linked transformation state
+  const [heroTransform, setHeroTransform] = useState({ scale: 1, translateY: 0, contentTranslateY: 0, opacity: 1 });
+
+  // Refs for Parallax and Scroll Progress
+  const heroImgRef = useRef(null);
+  const heroRafRef = useRef(null);
+  const mouseTarget = useRef({ x: 0, y: 0 });
+  const mouseCurrent = useRef({ x: 0, y: 0 });
+
+  const manifestoImgRef = useRef(null);
+  const approachImgRef = useRef(null);
+  const ctaBgRef = useRef(null);
+  const processSectionRef = useRef(null);
+  const selectedWorksSectionRef = useRef(null);
+
+  // Apply Parallax to Key Cinematic Photography Moments
+  useParallax(manifestoImgRef, 0.12);
+  useParallax(approachImgRef, 0.12);
+  useParallax(ctaBgRef, 0.15);
+
+  useEffect(() => {
+    axios
+      .get(`${API}/hero`)
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          const formatted = res.data.map((s) => ({
+            imageUrl: resolveImageSrc(s.imageUrl, HERO_FALLBACK_IMAGE),
+            alt: s.alt || 'SK Interior',
+          }));
+          setHeroSlides(formatted);
+        }
+      })
+      .catch(() => {});
+
+    axios
+      .get(`${API}/testimonials`)
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          setTestimonials(res.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const slides = heroSlides.length ? heroSlides : DEFAULT_SLIDES;
+
+  useEffect(() => {
+    let shown = false;
+    try {
+      shown = !!sessionStorage.getItem('sk_loader_shown');
+    } catch (_) {}
+    const delay = shown ? 100 : 1200;
+    const t = setTimeout(() => setHeroReady(true), delay);
+    return () => clearTimeout(t);
+  }, []);
 
   // Selected works: prioritize featured projects, fallback to latest projects in DB
   const featuredProjects = projects.filter((p) => p.featured);
@@ -169,6 +237,97 @@ export default function HomePage({
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  // Hero Scroll-linked transformation & Section Scroll Progress Listener
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let rafId = null;
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const heroHeight = window.innerHeight;
+
+      // 1. Hero Scroll-linked Transformation (Subtle Scale & Multi-layered depth)
+      if (scrollY <= heroHeight) {
+        const progress = Math.min(scrollY / heroHeight, 1);
+        const scale = 1 - progress * 0.04;
+        const translateY = -progress * 20;
+        const contentTranslateY = -progress * 30;
+        const opacity = 1 - progress * 0.15;
+        setHeroTransform({ scale, translateY, contentTranslateY, opacity });
+      }
+
+      // 2. Process Section Scroll Progress Timeline
+      if (processSectionRef.current) {
+        const rect = processSectionRef.current.getBoundingClientRect();
+        const winH = window.innerHeight;
+        const total = rect.height;
+        const current = winH - rect.top;
+        const p = Math.max(0, Math.min(1, current / (total + winH * 0.3)));
+        setProcessProgress(p);
+      }
+
+      // 3. Selected Works Section Scroll Progress
+      if (selectedWorksSectionRef.current) {
+        const rect = selectedWorksSectionRef.current.getBoundingClientRect();
+        const winH = window.innerHeight;
+        const total = rect.height;
+        const current = winH - rect.top;
+        const p = Math.max(0, Math.min(1, current / total));
+        setSelectedWorksProgress(p);
+      }
+
+      rafId = null;
+    };
+
+    const onScroll = () => {
+      if (!rafId) rafId = requestAnimationFrame(handleScroll);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  // Desktop mouse parallax
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(hover: none)').matches) return;
+    if (navigator.maxTouchPoints > 1) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const onMouseMove = (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      mouseTarget.current = { x: (e.clientX - cx) / cx, y: (e.clientY - cy) / cy };
+    };
+
+    const animateP = () => {
+      const lerp = (a, b, t) => a + (b - a) * t;
+      mouseCurrent.current.x = lerp(mouseCurrent.current.x, mouseTarget.current.x, 0.06);
+      mouseCurrent.current.y = lerp(mouseCurrent.current.y, mouseTarget.current.y, 0.06);
+      if (heroImgRef.current) {
+        const MAX = 10;
+        heroImgRef.current.style.transform = `translate3d(${(mouseCurrent.current.x * MAX).toFixed(
+          2
+        )}px, ${(mouseCurrent.current.y * MAX + heroTransform.translateY).toFixed(2)}px, 0) scale(${heroTransform.scale})`;
+      }
+      heroRafRef.current = requestAnimationFrame(animateP);
+    };
+
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    heroRafRef.current = requestAnimationFrame(animateP);
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      if (heroRafRef.current) cancelAnimationFrame(heroRafRef.current);
+    };
+  }, [heroTransform.scale, heroTransform.translateY]);
+
   return (
     <>
       <SEO
@@ -181,22 +340,33 @@ export default function HomePage({
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 1 — CINEMATIC FULLSCREEN HERO
             ═══════════════════════════════════════════════════════════════════ */}
-        <section className="relative h-screen min-h-[700px] max-h-[1100px] flex items-end bg-[#0A0A0A] text-[#F3F1ED] overflow-hidden">
-          {/* Background Slideshow with Smooth Crossfade */}
-          <div className="absolute inset-0 z-0">
+        <section
+          className="relative h-screen min-h-[700px] max-h-[1100px] flex items-end bg-[#0A0A0A] text-[#F3F1ED] overflow-hidden"
+          style={{ opacity: heroTransform.opacity }}
+        >
+          {/* Background Slideshow with Smooth Crossfade & Parallax Scale */}
+          <div
+            className="absolute inset-0 z-0 transition-transform duration-300 ease-out"
+            ref={heroImgRef}
+            style={{
+              transform: `translate3d(0, ${heroTransform.translateY}px, 0) scale(${heroTransform.scale})`,
+            }}
+          >
             {slides.map((slide, index) => (
               <div
                 key={index}
                 className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
                 style={{ opacity: index === currentSlide ? 1 : 0 }}
               >
-                <img
+                <SafeImage
                   src={slide.imageUrl}
                   alt={slide.alt}
-                  className="w-full h-full object-cover scale-105 transition-transform duration-10000 ease-out"
+                  fallbackSrc={HERO_FALLBACK_IMAGE}
+                  className="w-full h-full object-cover transition-transform duration-10000 ease-out"
                   style={{
                     transform: index === currentSlide ? 'scale(1.0)' : 'scale(1.08)',
                   }}
+                  loading={index === 0 ? 'eager' : 'lazy'}
                 />
               </div>
             ))}
@@ -205,16 +375,25 @@ export default function HomePage({
             <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A]/80 via-transparent to-[#0A0A0A]/40" />
           </div>
 
-          {/* Hero Content Layer */}
-          <div className="container-wide relative z-10 pb-16 lg:pb-20 pt-32 sm:pt-36 lg:pt-40 w-full">
+          {/* Hero Content Layer with Multi-layered Scroll Shift */}
+          <div
+            className="container-wide relative z-10 pb-16 lg:pb-20 pt-32 sm:pt-36 lg:pt-40 w-full transition-transform duration-300 ease-out"
+            style={{ transform: `translate3d(0, ${heroTransform.contentTranslateY}px, 0)` }}
+          >
             <div className="max-w-4xl">
-              <span className="section-label text-[#B59A62] mb-6 block">
+              <span
+                className={`section-label text-[#B59A62] mb-6 block transition-all duration-700 ${
+                  heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                }`}
+              >
                 BKC · Mumbai
               </span>
 
-              {/* Large Editorial Headline */}
+              {/* Original Approved Editorial Headline */}
               <h1
-                className="display-xl uppercase text-[#F3F1ED] mb-8"
+                className={`display-xl uppercase text-[#F3F1ED] mb-8 transition-all duration-1000 delay-200 ${
+                  heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                }`}
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 SPACES<br />
@@ -226,31 +405,43 @@ export default function HomePage({
 
               {/* Supporting positioning copy */}
               <p
-                className="max-w-xl text-[15px] sm:text-[17px] leading-relaxed text-[#F3F1ED]/70 font-light mb-10"
+                className={`max-w-xl text-[15px] sm:text-[17px] leading-relaxed text-[#F3F1ED]/70 font-light mb-10 transition-all duration-1000 delay-400 ${
+                  heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                }`}
                 style={{ fontFamily: 'var(--font-body)' }}
               >
                 SK Interior creates considered residential, commercial, and hospitality spaces shaped around the way people live and experience them.
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-5">
-                <Link
-                  href="/projects"
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-[10.5px] tracking-[0.24em] uppercase font-semibold transition-all duration-300 hover:-translate-y-0.5"
-                  style={{ background: 'var(--color-gold)', color: '#111111' }}
-                >
-                  <span>Explore Selected Work</span>
-                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                    <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
+              <div
+                className={`flex flex-wrap items-center gap-4 transition-all duration-1000 delay-500 ${
+                  heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+                }`}
+              >
+                <MagneticBtn>
+                  <Link
+                    href="/projects"
+                    className="btn-arch btn-arch-primary"
+                  >
+                    <span>EXPLORE SELECTED WORK</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" className="btn-arch-arrow">
+                      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </MagneticBtn>
 
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-3 px-8 py-4 rounded-full border border-white/20 text-[#F3F1ED] text-[10.5px] tracking-[0.24em] uppercase font-semibold hover:border-[#B59A62] hover:text-[#B59A62] transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  <span>Start a Project</span>
-                </Link>
+                <MagneticBtn>
+                  <Link
+                    href="/contact"
+                    className="btn-arch btn-arch-secondary"
+                  >
+                    <span>START A PROJECT</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" className="btn-arch-arrow">
+                      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </MagneticBtn>
               </div>
             </div>
 
@@ -284,7 +475,7 @@ export default function HomePage({
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SECTION 2 — MANIFESTO / BRAND STATEMENT
+            SECTION 2 — MANIFESTO / BRAND STATEMENT (CINEMATIC SCROLL MOMENT)
             ═══════════════════════════════════════════════════════════════════ */}
         <section className="section-padding relative" style={{ background: 'var(--color-surface)' }}>
           <div className="container-wide">
@@ -321,14 +512,18 @@ export default function HomePage({
                 </div>
               </SectionReveal>
 
-              {/* Asymmetric Right Column: Strong Architectural Image */}
-              <SectionReveal direction="right" delay={150}>
+              {/* Asymmetric Right Column: Strong Architectural Image with Clip Curtain & Parallax */}
+              <SectionReveal direction="clip" delay={150}>
                 <div className="relative">
-                  <div className="img-cover ratio-3-4 rounded-xl shadow-luxe">
-                    <img
-                      src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
-                      alt="SK Interior architectural statement"
-                    />
+                  <div className="img-cover ratio-3-4 rounded-xl shadow-luxe overflow-hidden" data-cursor="image">
+                    <div ref={manifestoImgRef} className="w-full h-full scale-110 origin-center">
+                      <SafeImage
+                        src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+                        alt="SK Interior architectural statement"
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out"
+                      />
+                    </div>
                   </div>
                   {/* Subtle decorative badge */}
                   <div className="absolute -bottom-6 -left-6 bg-[#111111] text-[#F3F1ED] p-6 rounded-lg hidden sm:block shadow-strong">
@@ -347,9 +542,13 @@ export default function HomePage({
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SECTION 3 — SELECTED WORK (MAJOR EDITORIAL PORTFOLIO)
+            SECTION 3 — SELECTED WORK (EDITORIAL PORTFOLIO STORYTELLING)
             ═══════════════════════════════════════════════════════════════════ */}
-        <section className="section-padding" style={{ background: 'var(--color-bg)' }}>
+        <section
+          ref={selectedWorksSectionRef}
+          className="section-padding"
+          style={{ background: 'var(--color-bg)' }}
+        >
           <div className="container-wide">
             {/* Header Row */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16 pb-8 border-b border-white/10">
@@ -487,20 +686,24 @@ export default function HomePage({
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SECTION 4 — DESIGN PHILOSOPHY (SPLIT EDITORIAL)
+            SECTION 4 — DESIGN PHILOSOPHY (SPLIT EDITORIAL WITH PARALLAX)
             ═══════════════════════════════════════════════════════════════════ */}
         <section className="section-padding" style={{ background: 'var(--color-surface)' }}>
           <div className="container-wide">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
               
-              {/* Left Column: Large Architectural Image */}
+              {/* Left Column: Large Architectural Image with Parallax Drift */}
               <div className="lg:col-span-5">
                 <SectionReveal direction="left">
-                  <div className="img-cover ratio-3-4 rounded-xl shadow-luxe">
-                    <img
-                      src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
-                      alt="SK Interior Design Approach"
-                    />
+                  <div className="img-cover ratio-3-4 rounded-xl shadow-luxe overflow-hidden" data-cursor="image">
+                    <div ref={approachImgRef} className="w-full h-full scale-110 origin-center">
+                      <SafeImage
+                        src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+                        alt="SK Interior Design Approach"
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out"
+                      />
+                    </div>
                   </div>
                 </SectionReveal>
               </div>
@@ -539,11 +742,13 @@ export default function HomePage({
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SECTION 5 — SERVICES EXPERIENCE (INTERACTIVE 3-CATEGORY ACCORDION)
+            SECTION 5 — DESIGN DISCIPLINES (PREMIUM SEGMENTED INTERACTION)
             ═══════════════════════════════════════════════════════════════════ */}
         <section className="section-padding" style={{ background: 'var(--color-bg)' }}>
-          <div className="container-wide">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16 pb-8 border-b border-white/10">
+          <div className="container-wide max-w-5xl mx-auto">
+            
+            {/* Section Header Row */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 pb-6 border-b border-white/10">
               <SectionReveal>
                 <span className="section-label mb-3 block">Expertise</span>
                 <h2 className="display-lg text-[#F3F1ED]">
@@ -557,7 +762,7 @@ export default function HomePage({
                   href="/services"
                   className="arrow-btn text-[#B59A62] text-[11px] tracking-[0.24em]"
                 >
-                  EXPLORE ALL SERVICES
+                  OUR APPROACH
                   <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                     <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -565,100 +770,143 @@ export default function HomePage({
               </SectionReveal>
             </div>
 
-            {/* Interactive 3-Category Accordion & Image View */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              
-              {/* Category List Column */}
-              <div className="lg:col-span-7 space-y-4">
-                {SERVICE_CATEGORIES.map((srv, idx) => {
-                  const isActive = activeService === idx;
-                  return (
-                    <div
-                      key={srv.number}
-                      onMouseEnter={() => setActiveService(idx)}
-                      onClick={() => setActiveService(idx)}
-                      className={`p-8 rounded-xl cursor-pointer transition-all duration-500 border ${
-                        isActive
-                          ? 'bg-white/5 border-[#B59A62]/40'
-                          : 'bg-transparent border-white/5 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-6">
-                          <span
-                            className={`text-2xl font-light transition-colors ${
-                              isActive ? 'text-[#B59A62]' : 'text-white/20'
-                            }`}
-                            style={{ fontFamily: 'var(--font-display)' }}
-                          >
-                            {srv.number}
-                          </span>
-                          <div>
-                            <h3
-                              className={`text-2xl sm:text-3xl font-light transition-colors ${
-                                isActive ? 'text-[#F3F1ED]' : 'text-[#F3F1ED]/60'
-                              }`}
-                              style={{ fontFamily: 'var(--font-display)' }}
-                            >
-                              {srv.title}
-                            </h3>
-                            <p className="text-xs text-[#B59A62] font-light mt-1">
-                              {srv.subtitle}
-                            </p>
-                          </div>
-                        </div>
-
-                        <svg
-                          width="20"
-                          height="20"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          viewBox="0 0 24 24"
-                          className={`transition-transform duration-300 ${
-                            isActive ? 'text-[#B59A62] translate-x-1' : 'text-white/20'
-                          }`}
-                        >
-                          <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </div>
-
-                      {/* Expandable description on active */}
-                      {isActive && (
-                        <div className="mt-6 pt-6 border-t border-white/10 text-sm leading-relaxed text-[#F3F1ED]/70 font-light" style={{ fontFamily: 'var(--font-body)' }}>
-                          <p>{srv.description}</p>
-                          <Link
-                            href={srv.link}
-                            className="inline-flex items-center gap-2 text-[10px] tracking-[0.24em] uppercase font-semibold text-[#B59A62] mt-4 hover:underline"
-                          >
-                            View Scope & Pricing
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Dynamic Image Display Column */}
-              <div className="lg:col-span-5">
-                <div className="img-cover ratio-4-3 rounded-xl shadow-strong">
-                  <img
-                    src={SERVICE_CATEGORIES[activeService].image}
-                    alt={SERVICE_CATEGORIES[activeService].title}
-                    className="transition-all duration-700 ease-out"
-                  />
+            {/* 1. Segmented Navigation Tabs — Placed directly above the image card */}
+            <SectionReveal delay={150}>
+              <div className="mb-8">
+                <div className="discipline-segmented-nav">
+                  {SERVICE_CATEGORIES.map((srv, idx) => {
+                    const isActive = activeService === idx;
+                    return (
+                      <button
+                        key={srv.number}
+                        type="button"
+                        onClick={() => setActiveService(idx)}
+                        className={`discipline-tab-btn ${isActive ? 'active' : ''}`}
+                        aria-selected={isActive}
+                        role="tab"
+                      >
+                        {srv.title.charAt(0) + srv.title.slice(1).toLowerCase()}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
+            </SectionReveal>
 
-            </div>
+            {/* 2. Interactive Image Card with Smooth Crossfade & Carousel Controls */}
+            <SectionReveal delay={200}>
+              <div className="relative aspect-[4/3] sm:aspect-[16/10] w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#141414] group">
+                {SERVICE_CATEGORIES.map((srv, idx) => (
+                  <div
+                    key={srv.number}
+                    className="absolute inset-0 transition-all duration-600 ease-out"
+                    style={{
+                      opacity: activeService === idx ? 1 : 0,
+                      transform: activeService === idx ? 'scale(1)' : 'scale(1.03)',
+                      pointerEvents: activeService === idx ? 'auto' : 'none',
+                      transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
+                  >
+                    <SafeImage
+                      src={srv.image}
+                      alt={srv.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                ))}
+
+                {/* Subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+
+                {/* Bottom Left Slide Counter */}
+                <div className="absolute bottom-6 left-6 font-mono text-xs tracking-widest text-[#F3F1ED]/70 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                  0{activeService + 1} / 0{SERVICE_CATEGORIES.length}
+                </div>
+
+                {/* Bottom Right Circular Carousel Controls */}
+                <div className="absolute bottom-6 right-6 flex items-center gap-3">
+                  <button
+                    type="button"
+                    aria-label="Previous discipline"
+                    onClick={() => setActiveService((prev) => (prev - 1 + SERVICE_CATEGORIES.length) % SERVICE_CATEGORIES.length)}
+                    className="btn-carousel-circle"
+                  >
+                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="arrow-prev">
+                      <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+
+                  <button
+                    type="button"
+                    aria-label="Next discipline"
+                    onClick={() => setActiveService((prev) => (prev + 1) % SERVICE_CATEGORIES.length)}
+                    className="btn-carousel-circle"
+                  >
+                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="arrow-next">
+                      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </SectionReveal>
+
+            {/* 3. Active Discipline Details & Architectural CTA Button */}
+            <SectionReveal delay={250}>
+              <div className="mt-8 space-y-6">
+                <div className="flex items-baseline gap-4">
+                  <span
+                    className="text-3xl font-light text-[#B59A62]"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    {SERVICE_CATEGORIES[activeService].number}
+                  </span>
+                  <div>
+                    <h3
+                      className="text-2xl sm:text-3xl font-light text-[#F3F1ED] tracking-wide"
+                      style={{ fontFamily: 'var(--font-display)' }}
+                    >
+                      {SERVICE_CATEGORIES[activeService].title}
+                    </h3>
+                    <p className="text-xs text-[#B59A62] font-light mt-1" style={{ fontFamily: 'var(--font-body)' }}>
+                      {SERVICE_CATEGORIES[activeService].subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-white/10">
+                  <p
+                    className="text-sm sm:text-base leading-relaxed text-[#F3F1ED]/70 font-light mb-8 max-w-3xl"
+                    style={{ fontFamily: 'var(--font-body)' }}
+                  >
+                    {SERVICE_CATEGORIES[activeService].description}
+                  </p>
+
+                  {/* Architectural CTA Button */}
+                  <Link
+                    href={SERVICE_CATEGORIES[activeService].link}
+                    className="btn-arch btn-arch-secondary btn-arch-full sm:w-auto"
+                  >
+                    <span>VIEW SCOPE & PRICING</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" className="btn-arch-arrow">
+                      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </SectionReveal>
+
           </div>
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SECTION 6 — PROCESS (5-STEP VISUAL JOURNEY)
+            SECTION 6 — PROCESS (PROGRESSIVE SCROLL TIMELINE)
             ═══════════════════════════════════════════════════════════════════ */}
-        <section className="section-padding" style={{ background: 'var(--color-surface)' }}>
+        <section
+          ref={processSectionRef}
+          className="section-padding"
+          style={{ background: 'var(--color-surface)' }}
+        >
           <div className="container-wide">
             <SectionReveal>
               <span className="section-label mb-4 block">Methodology</span>
@@ -668,38 +916,64 @@ export default function HomePage({
               </h2>
             </SectionReveal>
 
-            {/* Horizontal Line (Desktop) / Vertical Line (Mobile) Connecting Steps */}
+            {/* Horizontal Line (Desktop) / Vertical Line (Mobile) with Real Scroll Progress */}
             <div className="relative">
-              <div className="hidden lg:block absolute top-[28px] left-0 right-0 h-px bg-black/15 z-0" />
-              <div className="lg:hidden absolute top-4 bottom-4 left-[27px] w-px bg-black/15 z-0" />
+              {/* Desktop Horizontal Line */}
+              <div className="hidden lg:block absolute top-[28px] left-0 right-0 h-0.5 bg-black/10 z-0">
+                <div
+                  className="h-full bg-[#B59A62] transition-transform duration-200 ease-out origin-left"
+                  style={{ transform: `scaleX(${processProgress})` }}
+                />
+              </div>
+
+              {/* Mobile Vertical Line */}
+              <div className="lg:hidden absolute top-4 bottom-4 left-[27px] w-0.5 bg-black/10 z-0">
+                <div
+                  className="w-full bg-[#B59A62] transition-transform duration-200 ease-out origin-top"
+                  style={{ transform: `scaleY(${processProgress})` }}
+                />
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-8 relative z-10">
-                {PROCESS_STEPS.map((step, idx) => (
-                  <SectionReveal key={step.number} delay={idx * 80}>
-                    <div className="bg-[#F3F1ED] pl-14 lg:pl-0 lg:bg-transparent pr-4">
-                      {/* Step Indicator Dot */}
-                      <div className="w-14 h-14 rounded-full bg-[#111111] text-[#B59A62] flex items-center justify-center font-mono text-sm mb-5 shadow-sm -ml-14 lg:ml-0">
-                        {step.number}
-                      </div>
+                {PROCESS_STEPS.map((step, idx) => {
+                  const stepThreshold = (idx + 1) / PROCESS_STEPS.length;
+                  const isStepActive = processProgress >= stepThreshold - 0.15;
 
-                      <h3
-                        className="text-xl font-light text-[#151515] mb-1"
-                        style={{ fontFamily: 'var(--font-display)' }}
-                      >
-                        {step.title}
-                      </h3>
-                      <p className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#B59A62] mb-2">
-                        {step.subtitle}
-                      </p>
-                      <p
-                        className="text-xs leading-relaxed text-[#6F6B65] font-light"
-                        style={{ fontFamily: 'var(--font-body)' }}
-                      >
-                        {step.desc}
-                      </p>
-                    </div>
-                  </SectionReveal>
-                ))}
+                  return (
+                    <SectionReveal key={step.number} delay={idx * 80}>
+                      <div className="bg-[#F3F1ED] pl-14 lg:pl-0 lg:bg-transparent pr-4 group">
+                        {/* Step Indicator Dot */}
+                        <div
+                          className={`w-14 h-14 rounded-full flex items-center justify-center font-mono text-sm mb-5 shadow-sm -ml-14 lg:ml-0 transition-all duration-500 ${
+                            isStepActive
+                              ? 'bg-[#B59A62] text-[#111111] scale-105 shadow-md'
+                              : 'bg-[#111111] text-[#B59A62]'
+                          }`}
+                        >
+                          {step.number}
+                        </div>
+
+                        <h3
+                          className={`text-xl font-light mb-1 transition-colors duration-300 ${
+                            isStepActive ? 'text-[#151515] font-normal' : 'text-[#151515]/70'
+                          }`}
+                          style={{ fontFamily: 'var(--font-display)' }}
+                        >
+                          {step.title}
+                        </h3>
+                        <p className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#B59A62] mb-2">
+                          {step.subtitle}
+                        </p>
+                        <p
+                          className="text-xs leading-relaxed text-[#6F6B65] font-light"
+                          style={{ fontFamily: 'var(--font-body)' }}
+                        >
+                          {step.desc}
+                        </p>
+                      </div>
+                    </SectionReveal>
+                  );
+                })}
               </div>
             </div>
 
@@ -715,47 +989,79 @@ export default function HomePage({
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SECTION 7 — FEATURED TESTIMONIAL (EDITORIAL SINGLE FEATURE)
+            SECTION 7 — CLIENT VOICE & REVIEWS (UNIQUE LUXURY EDITORIAL)
             ═══════════════════════════════════════════════════════════════════ */}
         {testimonials && testimonials.length > 0 && (
-          <section className="section-padding" style={{ background: 'var(--color-bg)' }}>
+          <section className="section-padding relative overflow-hidden" style={{ background: 'var(--color-bg)' }}>
             <div className="container-narrow">
               <SectionReveal>
-                <span className="section-label mb-8 block justify-center">Client Voice</span>
+                <div className="text-center mb-6">
+                  <span className="section-label inline-block text-[#B59A62]">Client Voices</span>
+                </div>
 
-                <div className="text-center relative">
-                  {/* Large Quotation Mark */}
-                  <span
-                    className="block text-[#B59A62]/20 leading-none select-none -mb-12"
-                    style={{ fontFamily: 'var(--font-display)', fontSize: '10rem' }}
-                  >
-                    &ldquo;
-                  </span>
+                <div className="text-center relative bg-[#141414]/80 border border-white/10 rounded-3xl p-8 sm:p-14 shadow-2xl backdrop-blur-md group hover:border-[#B59A62]/40 transition-all duration-500">
+                  
+                  {/* 5-Star Rating & Verified Badge */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                    <div className="flex items-center gap-1.5 text-[#B59A62]">
+                      {[...Array(testimonials[activeTestimonial]?.rating || 5)].map((_, i) => (
+                        <svg key={i} width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                      ))}
+                      <span className="text-xs font-semibold text-[#B59A62] ml-2">5.0 / 5.0</span>
+                    </div>
+
+                    <span className="text-[9px] tracking-[0.24em] uppercase px-3 py-1 rounded-full bg-emerald-950/40 text-emerald-400 border border-emerald-500/20 font-semibold flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Verified Client Reflection
+                    </span>
+                  </div>
 
                   {/* Main Quote Statement */}
                   <p
-                    className="display-md font-light text-[#F3F1ED] leading-snug mb-10"
+                    className="display-md font-light text-[#F3F1ED] leading-snug mb-10 min-h-[120px] flex items-center justify-center"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    {(testimonials[activeTestimonial] || testimonials[0])?.text}
+                    &ldquo;{testimonials[activeTestimonial]?.text}&rdquo;
                   </p>
 
-                  {/* Client Metadata */}
-                  <div>
-                    <h4 className="text-base text-[#F3F1ED] font-medium" style={{ fontFamily: 'var(--font-body)' }}>
-                      {(testimonials[activeTestimonial] || testimonials[0])?.name}
+                  {/* Client Profile Avatar & Metadata */}
+                  <div className="mb-8 flex flex-col items-center justify-center">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#B59A62] shadow-xl mb-3 bg-[#222] flex-shrink-0">
+                      {testimonials[activeTestimonial]?.avatar ? (
+                        <img
+                          src={testimonials[activeTestimonial].avatar}
+                          alt={testimonials[activeTestimonial].name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[#B59A62] font-bold text-sm bg-gradient-to-br from-[#1A1917] to-[#2B2822]">
+                          {testimonials[activeTestimonial]?.avatarInitials || 'SK'}
+                        </div>
+                      )}
+                    </div>
+
+                    <h4 className="text-lg text-[#F3F1ED] font-normal" style={{ fontFamily: 'var(--font-display)' }}>
+                      {testimonials[activeTestimonial]?.name}
                     </h4>
-                    <p className="text-xs text-[#B59A62] font-light mt-1">
-                      {(testimonials[activeTestimonial] || testimonials[0])?.loc}{' '}
-                      {(testimonials[activeTestimonial] || testimonials[0])?.project
-                        ? `· ${(testimonials[activeTestimonial] || testimonials[0])?.project}`
-                        : ''}
+                    <p className="text-xs text-[#B59A62] font-light mt-1 tracking-wide">
+                      {testimonials[activeTestimonial]?.loc} {testimonials[activeTestimonial]?.project ? `· ${testimonials[activeTestimonial]?.project}` : ''}
                     </p>
                   </div>
 
-                  {/* Switcher Controls */}
-                  {testimonials.length > 1 && (
-                    <div className="flex items-center justify-center gap-3 mt-10">
+                  {/* Switcher & Navigation Controls */}
+                  <div className="flex items-center justify-center gap-4 mb-8">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
+                      className="w-10 h-10 rounded-full border border-white/15 text-[#F3F1ED]/70 hover:text-[#B59A62] hover:border-[#B59A62] flex items-center justify-center transition-colors"
+                      aria-label="Previous review"
+                    >
+                      ←
+                    </button>
+
+                    <div className="flex items-center gap-2">
                       {testimonials.map((_, i) => (
                         <button
                           key={i}
@@ -768,7 +1074,34 @@ export default function HomePage({
                         />
                       ))}
                     </div>
-                  )}
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
+                      className="w-10 h-10 rounded-full border border-white/15 text-[#F3F1ED]/70 hover:text-[#B59A62] hover:border-[#B59A62] flex items-center justify-center transition-colors"
+                      aria-label="Next review"
+                    >
+                      →
+                    </button>
+                  </div>
+
+                  {/* Action Links to Dedicated Review Page */}
+                  <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-4">
+                    <Link
+                      href="/reviews"
+                      className="px-6 py-3 rounded-xl bg-[#B59A62] text-[#111111] text-[11px] tracking-[0.22em] uppercase font-bold hover:bg-[#c4a96f] transition-all shadow-lg"
+                    >
+                      EXPLORE ALL REVIEWS ({testimonials.length}+)
+                    </Link>
+
+                    <Link
+                      href="/reviews"
+                      className="px-6 py-3 rounded-xl border border-white/20 text-[#F3F1ED] text-[11px] tracking-[0.22em] uppercase font-semibold hover:border-[#B59A62] hover:text-[#B59A62] transition-all"
+                    >
+                      + WRITE A REVIEW
+                    </Link>
+                  </div>
+
                 </div>
               </SectionReveal>
             </div>
@@ -776,16 +1109,19 @@ export default function HomePage({
         )}
 
         {/* ═══════════════════════════════════════════════════════════════════
-            SECTION 8 — FINAL PROJECT CTA (DRAMATIC EDITORIAL)
+            SECTION 8 — FINAL PROJECT CTA (CINEMATIC ENDING)
             ═══════════════════════════════════════════════════════════════════ */}
         <section className="relative py-28 lg:py-40 bg-[#0A0A0A] text-[#F3F1ED] overflow-hidden">
-          {/* Background image with heavy dark gradient */}
-          <div className="absolute inset-0 z-0 opacity-25">
-            <img
-              src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80"
-              alt="SK Interior architectural background"
-              className="w-full h-full object-cover"
-            />
+          {/* Background image with dark gradient overlay & subtle parallax */}
+          <div className="absolute inset-0 z-0 opacity-25 overflow-hidden">
+            <div ref={ctaBgRef} className="w-full h-full">
+              <SafeImage
+                src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1920&q=80"
+                alt="SK Interior architectural background"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/80 to-[#0A0A0A]" />
 
@@ -812,20 +1148,29 @@ export default function HomePage({
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center px-9 py-4 rounded-full text-[10.5px] tracking-[0.26em] uppercase font-semibold transition-all duration-300 hover:-translate-y-0.5"
-                  style={{ background: 'var(--color-gold)', color: '#111111' }}
-                >
-                  START A PROJECT
-                </Link>
+                <MagneticBtn>
+                  <Link
+                    href="/contact"
+                    className="btn-arch btn-arch-primary min-w-[220px]"
+                  >
+                    <span>START A PROJECT</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" className="btn-arch-arrow">
+                      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </MagneticBtn>
 
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center px-9 py-4 rounded-full border border-white/20 text-[#F3F1ED] text-[10.5px] tracking-[0.26em] uppercase font-semibold hover:border-[#B59A62] hover:text-[#B59A62] transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  BOOK A CONSULTATION
-                </Link>
+                <MagneticBtn>
+                  <Link
+                    href="/contact"
+                    className="btn-arch btn-arch-secondary min-w-[220px]"
+                  >
+                    <span>BOOK A CONSULTATION</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" className="btn-arch-arrow">
+                      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </MagneticBtn>
               </div>
             </SectionReveal>
           </div>

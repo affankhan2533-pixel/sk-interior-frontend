@@ -3,9 +3,19 @@ import { useRouter } from 'next/router';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import PageTransition from '../components/PageTransition';
+import CustomCursor from '../components/CustomCursor';
+import LuxuryLoader from '../components/LuxuryLoader';
+import useScrollProgress from '../lib/useScrollProgress';
 
 function isAdminRoute(pathname) {
   return pathname.startsWith('/admin');
+}
+
+function AppInner({ Component, pageProps }) {
+  // Activate scroll progress bar globally
+  useScrollProgress();
+
+  return <Component {...pageProps} />;
 }
 
 export default function App({ Component, pageProps }) {
@@ -14,10 +24,15 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
+      {/* Luxury intro loader — session-once */}
+      {!admin && <LuxuryLoader />}
+
       {!admin && <Navbar />}
+
       <PageTransition>
-        <Component {...pageProps} />
+        <AppInner Component={Component} pageProps={pageProps} />
       </PageTransition>
+
       {!admin && <Footer />}
     </>
   );

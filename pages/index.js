@@ -16,7 +16,7 @@ const DEFAULT_SLIDES = [
     alt: 'Santacruz Residence — SK Interior',
   },
   {
-    imageUrl: '/images/reviews/altitude_penthouse.jpg',
+    imageUrl: '/review/review-2.png',
     alt: 'Altitude Penthouse — SK Interior',
   },
   {
@@ -33,7 +33,7 @@ const DEFAULT_TESTIMONIALS = [
     loc: 'Santacruz West, Mumbai',
     text: 'SK Interior transformed our 3,200 sq ft apartment into a sanctuary of calm. Simran’s eye for material relationships and restraint created a space that feels deeply personal, quiet, and effortlessly luxurious.',
     project: 'The Santacruz Residence',
-    roomPhoto: '/images/reviews/santacruz_residence.jpg',
+    roomPhoto: '/review/review-1.png',
     rating: 5,
   },
   {
@@ -43,7 +43,7 @@ const DEFAULT_TESTIMONIALS = [
     loc: 'Worli Sea Face, Mumbai',
     text: 'The altitude penthouse demanded a design that respected the sea view without feeling like a glass showroom. The dark walnut joinery and smoked oak flooring ground the space masterfully.',
     project: 'Altitude Penthouse',
-    roomPhoto: '/images/reviews/altitude_penthouse.jpg',
+    roomPhoto: '/review/review-2.png',
     rating: 5,
   },
   {
@@ -53,7 +53,7 @@ const DEFAULT_TESTIMONIALS = [
     loc: 'Alibaug Coast',
     text: 'Living in our Alibaug villa feels like floating between the interior and the landscape. The marine-grade teak and Kota stone age beautifully under coastal light.',
     project: 'The Sea Villa',
-    roomPhoto: '/images/reviews/interior_bedroom_suite.jpg',
+    roomPhoto: '/review/review-3.png',
     rating: 5,
   },
 ];
@@ -204,7 +204,21 @@ export default function HomePage({
       .get(`${API}/testimonials`)
       .then((res) => {
         if (res.data && res.data.length > 0) {
-          setTestimonials(res.data);
+          const reviewImgs = [
+            '/review/review-1.png',
+            '/review/review-2.png',
+            '/review/review-3.png',
+            '/review/review-4.png',
+            '/review/review-5.png',
+            '/review/review-6.png',
+            '/review/review-7.png',
+            '/review/review-8.png',
+          ];
+          const mapped = res.data.map((item, idx) => ({
+            ...item,
+            roomPhoto: item.roomPhoto || reviewImgs[idx % reviewImgs.length],
+          }));
+          setTestimonials(mapped);
         }
       })
       .catch(() => {});

@@ -6,6 +6,17 @@ import SectionReveal from '../components/SectionReveal';
 import SafeImage from '../components/SafeImage';
 import { API } from '../lib/api';
 
+const REVIEW_REAL_IMAGES = [
+  '/review/review-1.png',
+  '/review/review-2.png',
+  '/review/review-3.png',
+  '/review/review-4.png',
+  '/review/review-5.png',
+  '/review/review-6.png',
+  '/review/review-7.png',
+  '/review/review-8.png',
+];
+
 const DEFAULT_REVIEWS = [
   {
     _id: 'featured-1',
@@ -15,7 +26,7 @@ const DEFAULT_REVIEWS = [
     avatarInitials: 'VM',
     loc: 'Santacruz West, Mumbai',
     project: 'The Santacruz Residence (3,200 sq ft)',
-    roomPhoto: '/images/reviews/santacruz_residence.jpg',
+    roomPhoto: '/review/review-1.png',
     rating: 5,
     category: 'Residences',
     date: 'August 2026',
@@ -30,7 +41,7 @@ const DEFAULT_REVIEWS = [
     avatarInitials: 'SS',
     loc: 'Worli Sea Face, Mumbai',
     project: 'Altitude Penthouse (4,500 sq ft)',
-    roomPhoto: '/images/reviews/altitude_penthouse.jpg',
+    roomPhoto: '/review/review-2.png',
     rating: 5,
     category: 'Penthouses',
     date: 'July 2026',
@@ -45,7 +56,7 @@ const DEFAULT_REVIEWS = [
     avatarInitials: 'TG',
     loc: 'Alibaug Coast',
     project: 'The Coastal Villa (6,000 sq ft)',
-    roomPhoto: '/images/reviews/interior_bedroom_suite.jpg',
+    roomPhoto: '/review/review-3.png',
     rating: 5,
     category: 'Villas',
     date: 'May 2026',
@@ -60,7 +71,7 @@ const DEFAULT_REVIEWS = [
     avatarInitials: 'AK',
     loc: 'Pali Hill, Bandra West',
     project: 'Pali Hill Duplex (2,800 sq ft)',
-    roomPhoto: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80',
+    roomPhoto: '/review/review-4.png',
     rating: 5,
     category: 'Residences',
     date: 'March 2026',
@@ -75,7 +86,7 @@ const DEFAULT_REVIEWS = [
     avatarInitials: 'KS',
     loc: 'Juhu, Mumbai',
     project: 'Wellness Suite & Office (1,800 sq ft)',
-    roomPhoto: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80',
+    roomPhoto: '/review/review-5.png',
     rating: 5,
     category: 'Commercial',
     date: 'January 2026',
@@ -90,13 +101,43 @@ const DEFAULT_REVIEWS = [
     avatarInitials: 'NW',
     loc: 'Lower Parel, Mumbai',
     project: 'The Sky Apartment (3,800 sq ft)',
-    roomPhoto: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80',
+    roomPhoto: '/review/review-6.png',
     rating: 5,
     category: 'Penthouses',
     date: 'November 2025',
     text: 'Simran and her team brought unparalleled perfection to our high-rise apartment. From custom concealed storage solutions to curated art lighting, their attention to micro-details is unmatched in Mumbai.',
     helpful: 20,
     tags: ['High-Rise', 'Concealed Joinery', 'Art Curation'],
+  },
+  {
+    _id: 'default-7',
+    name: 'Kavita & Devendra Singhal',
+    avatar: 'https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=250&q=80',
+    avatarInitials: 'KS',
+    loc: 'Khar West, Mumbai',
+    project: 'Khar Courtyard House (4,100 sq ft)',
+    roomPhoto: '/review/review-7.png',
+    rating: 5,
+    category: 'Residences',
+    date: 'October 2025',
+    text: 'From initial spatial layouts to the final styling, the experience was seamless. The courtyard lighting scheme and micro-textured walls create an extraordinary ambiance at dusk.',
+    helpful: 16,
+    tags: ['Courtyard Lighting', 'Textured Plaster', 'Bespoke Joinery'],
+  },
+  {
+    _id: 'default-8',
+    name: 'Rajesh & Sonal Parekh',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=250&q=80',
+    avatarInitials: 'RP',
+    loc: 'Prabhadevi, Mumbai',
+    project: 'Seafront Residence (3,600 sq ft)',
+    roomPhoto: '/review/review-8.png',
+    rating: 5,
+    category: 'Residences',
+    date: 'September 2025',
+    text: 'The restrained material palette of natural marble, fluted oak, and concealed linear lighting turned our seafront apartment into a modern classic.',
+    helpful: 21,
+    tags: ['Natural Marble', 'Linear Lighting', 'Seafront'],
   },
 ];
 
@@ -138,7 +179,7 @@ export default function ReviewsPage() {
               : 'SK',
             loc: item.loc || 'Santacruz West, Mumbai',
             project: item.project || 'Bespoke Residence',
-            roomPhoto: item.roomPhoto || (idx % 2 === 0 ? '/images/reviews/santacruz_residence.jpg' : '/images/reviews/altitude_penthouse.jpg'),
+            roomPhoto: item.roomPhoto || REVIEW_REAL_IMAGES[idx % REVIEW_REAL_IMAGES.length],
             rating: item.rating || 5,
             category: item.project?.toLowerCase().includes('villa')
               ? 'Villas'
@@ -153,7 +194,7 @@ export default function ReviewsPage() {
             tags: ['Custom Joinery', 'Bespoke Lighting', 'Turnkey Studio'],
           }));
 
-          // Ensure our featured Santacruz residence stays at the top
+          // Ensure our reviews stay loaded
           setReviews(merged);
         }
       })
@@ -198,7 +239,7 @@ export default function ReviewsPage() {
         avatarInitials: initials,
         loc: created.loc || 'Santacruz West, Mumbai',
         project: created.project || 'Bespoke Interior',
-        roomPhoto: '/images/reviews/santacruz_residence.jpg',
+        roomPhoto: REVIEW_REAL_IMAGES[Math.floor(Math.random() * REVIEW_REAL_IMAGES.length)],
         rating: created.rating || form.rating,
         category: 'Residences',
         date: 'Just Published',
@@ -219,7 +260,7 @@ export default function ReviewsPage() {
         avatarInitials: initials,
         loc: form.loc || 'Santacruz West, Mumbai',
         project: form.project || 'Bespoke Residence',
-        roomPhoto: '/images/reviews/santacruz_residence.jpg',
+        roomPhoto: REVIEW_REAL_IMAGES[Math.floor(Math.random() * REVIEW_REAL_IMAGES.length)],
         rating: form.rating,
         category: 'Residences',
         date: 'Just Published',

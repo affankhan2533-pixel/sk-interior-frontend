@@ -23,12 +23,8 @@ const STUDIO_DETAILS = {
   appointmentNote: 'Consultations by appointment only.',
   whatsappUrl:
     'https://wa.me/919870760240?text=Hi%20SK%20Interior%2C%20I%27m%20interested%20in%20discussing%20an%20interior%20project.',
-<<<<<<< HEAD
-  googleMapsUrl: 'https://maps.google.com/?q=Santacruz+West+Mumbai',
-=======
   googleMapsUrl:
     'https://maps.google.com/?q=1012+Commercial+Tower+Near+Trade+Centre+BKC+Mumbai',
->>>>>>> upstream/main
 };
 
 const NEXT_STEPS = [
@@ -993,11 +989,7 @@ export default function ContactPage() {
                     className="text-[14.5px] sm:text-[15.5px] leading-relaxed text-[#151515]/70 font-light mb-8 max-w-lg"
                     style={{ fontFamily: 'var(--font-body)' }}
                   >
-<<<<<<< HEAD
-                    Located in Santacruz West, our studio space hosts material consultations, 3D project reviews, and initial design discovery meetings by appointment.
-=======
                     Located in 1012 Commercial Tower, near Trade Centre, BKC, our studio space hosts material consultations, 3D project reviews, and initial design discovery meetings by appointment.
->>>>>>> upstream/main
                   </p>
 
                   <div className="space-y-4 mb-8 text-[14px]" style={{ fontFamily: 'var(--font-body)' }}>
@@ -1045,25 +1037,15 @@ export default function ContactPage() {
                   <div className="relative overflow-hidden aspect-[16/10] w-full border border-[#151515]/8 group">
                     <SafeImage
                       src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1400&q=80"
-<<<<<<< HEAD
-                      alt="SK Interior Santacruz Studio entrance"
-                      className="w-full h-full object-cover transition-transform duration-900 ease-out group-hover:scale-104"
-=======
                       alt="SK Interior BKC Studio entrance"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
->>>>>>> upstream/main
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#111111]/60 via-transparent to-transparent pointer-events-none" />
                     {/* Bottom caption */}
                     <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
                       <div>
-<<<<<<< HEAD
-                        <span className="text-[8.5px] tracking-[0.28em] uppercase font-bold text-[#B59A62] block mb-0.5">
-                          SANTACRUZ, MUMBAI
-=======
                         <span className="text-[9px] tracking-[0.26em] uppercase font-semibold text-[#B59A62] block">
                           BKC, MUMBAI
->>>>>>> upstream/main
                         </span>
                         <p
                           className="text-[12px] font-light text-white/75"

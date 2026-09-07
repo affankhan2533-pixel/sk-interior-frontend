@@ -3,16 +3,12 @@ import Link from 'next/link';
 import axios from 'axios';
 import SEO from '../components/SEO';
 import SectionReveal from '../components/SectionReveal';
-<<<<<<< HEAD
 import MagneticBtn from '../components/MagneticBtn';
 import SafeImage from '../components/SafeImage';
+import ProjectCard from '../components/ProjectCard';
 import useParallax from '../lib/useParallax';
 import { API, BACKEND, HERO_FALLBACK_IMAGE, resolveImageSrc } from '../lib/api';
 import { PROJECTS } from '../data/projects';
-=======
-import ProjectCard from '../components/ProjectCard';
-import { API, BACKEND, resolveImageSrc } from '../lib/api';
->>>>>>> upstream/main
 
 const DEFAULT_SLIDES = [
   {
@@ -190,7 +186,6 @@ export default function HomePage({
   useParallax(approachImgRef, 0.12);
   useParallax(ctaBgRef, 0.15);
 
-<<<<<<< HEAD
   useEffect(() => {
     axios
       .get(`${API}/hero`)
@@ -226,8 +221,6 @@ export default function HomePage({
     const t = setTimeout(() => setHeroReady(true), delay);
     return () => clearTimeout(t);
   }, []);
-=======
-  const slides = heroSlides.length ? heroSlides : DEFAULT_SLIDES;
 
   // Selected works: prioritize featured projects, fallback to latest projects in DB
   const featuredProjects = projects.filter((p) => p.featured);
@@ -235,7 +228,6 @@ export default function HomePage({
     featuredProjects.length > 0
       ? featuredProjects.slice(0, 3)
       : projects.slice(0, 3);
->>>>>>> upstream/main
 
   // Auto-advance hero slides
   useEffect(() => {
@@ -389,17 +381,12 @@ export default function HomePage({
             style={{ transform: `translate3d(0, ${heroTransform.contentTranslateY}px, 0)` }}
           >
             <div className="max-w-4xl">
-<<<<<<< HEAD
               <span
                 className={`section-label text-[#B59A62] mb-6 block transition-all duration-700 ${
                   heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                 }`}
               >
-                Santacruz · Mumbai
-=======
-              <span className="section-label text-[#B59A62] mb-6 block">
                 BKC · Mumbai
->>>>>>> upstream/main
               </span>
 
               {/* Original Approved Editorial Headline */}
@@ -586,71 +573,6 @@ export default function HomePage({
               </SectionReveal>
             </div>
 
-<<<<<<< HEAD
-            {/* 3 Major Editorial Project Features */}
-            <div className="space-y-20">
-              {PROJECTS.slice(0, 3).map((project, idx) => (
-                <SectionReveal key={project.slug} delay={idx * 100}>
-                  <Link href={`/projects/${project.slug}`} className="group block" data-cursor="explore">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                      
-                      {/* Image Column - Alternating width layout with smooth hover scale */}
-                      <div className={`lg:col-span-8 ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
-                        <div className="img-cover ratio-16-9 rounded-xl shadow-2xl overflow-hidden border border-white/10 group-hover:border-[#B59A62]/40 transition-colors duration-500">
-                          <SafeImage
-                            src={project.coverImage}
-                            alt={project.title}
-                            loading="lazy"
-                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Info Column */}
-                      <div className={`lg:col-span-4 ${idx % 2 === 1 ? 'lg:order-1' : ''}`}>
-                        <div className="flex items-center gap-4 mb-4">
-                          <span
-                            className="text-[#B59A62] text-xl font-light"
-                            style={{ fontFamily: 'var(--font-display)' }}
-                          >
-                            {project.number}
-                          </span>
-                          <span className="text-white/20">•</span>
-                          <span className="text-[10px] tracking-[0.24em] uppercase font-semibold text-[#B59A62]">
-                            {project.category}
-                          </span>
-                        </div>
-
-                        <h3
-                          className="text-[2.2rem] sm:text-[2.8rem] font-light text-[#F3F1ED] group-hover:text-[#B59A62] transition-colors duration-300 leading-tight mb-4"
-                          style={{ fontFamily: 'var(--font-display)' }}
-                        >
-                          {project.title}
-                        </h3>
-
-                        <p
-                          className="text-xs tracking-wider uppercase text-[#F3F1ED]/40 font-light mb-6"
-                          style={{ fontFamily: 'var(--font-body)' }}
-                        >
-                          {project.location} · {project.year}
-                        </p>
-
-                        <p
-                          className="text-sm leading-relaxed text-[#F3F1ED]/60 font-light line-clamp-3 mb-8"
-                          style={{ fontFamily: 'var(--font-body)' }}
-                        >
-                          {project.intro}
-                        </p>
-
-                        <span className="arrow-btn text-[#F3F1ED] group-hover:text-[#B59A62] transition-colors">
-                          Explore Case Study
-                          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                            <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </span>
-                      </div>
-
-=======
             {/* Editorial Project Features from Database */}
             {projectsLoading ? (
               <div className="space-y-16">
@@ -662,7 +584,6 @@ export default function HomePage({
                       <div className="h-8 bg-white/10 rounded w-3/4" />
                       <div className="h-4 bg-white/10 rounded w-1/2" />
                       <div className="h-16 bg-white/10 rounded w-full" />
->>>>>>> upstream/main
                     </div>
                   </div>
                 ))}
@@ -1070,161 +991,77 @@ export default function HomePage({
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 7 — CLIENT VOICE & REVIEWS (UNIQUE LUXURY EDITORIAL)
             ═══════════════════════════════════════════════════════════════════ */}
-<<<<<<< HEAD
-        <section className="section-padding relative overflow-hidden" style={{ background: 'var(--color-bg)' }}>
-          <div className="container-narrow">
-            <SectionReveal>
-              <div className="text-center mb-6">
-                <span className="section-label inline-block text-[#B59A62]">Client Voices</span>
-              </div>
-
-              <div className="text-center relative bg-[#141414]/80 border border-white/10 rounded-3xl p-8 sm:p-14 shadow-2xl backdrop-blur-md group hover:border-[#B59A62]/40 transition-all duration-500">
-                
-                {/* 5-Star Rating & Verified Badge */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-                  <div className="flex items-center gap-1.5 text-[#B59A62]">
-                    {[...Array(testimonials[activeTestimonial]?.rating || 5)].map((_, i) => (
-                      <svg key={i} width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
-                    ))}
-                    <span className="text-xs font-semibold text-[#B59A62] ml-2">5.0 / 5.0</span>
-                  </div>
-
-                  <span className="text-[9px] tracking-[0.24em] uppercase px-3 py-1 rounded-full bg-emerald-950/40 text-emerald-400 border border-emerald-500/20 font-semibold flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Verified Client Reflection
-                  </span>
-                </div>
-
-                {/* Main Quote Statement */}
-                <p
-                  className="display-md font-light text-[#F3F1ED] leading-snug mb-10 min-h-[120px] flex items-center justify-center"
-                  style={{ fontFamily: 'var(--font-display)' }}
-                >
-                  &ldquo;{testimonials[activeTestimonial]?.text}&rdquo;
-                </p>
-
-                {/* Client Profile Avatar & Metadata */}
-                <div className="mb-8 flex flex-col items-center justify-center">
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#B59A62] shadow-xl mb-3 bg-[#222] flex-shrink-0">
-                    {testimonials[activeTestimonial]?.avatar ? (
-                      <img
-                        src={testimonials[activeTestimonial].avatar}
-                        alt={testimonials[activeTestimonial].name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#B59A62] font-bold text-sm bg-gradient-to-br from-[#1A1917] to-[#2B2822]">
-                        {testimonials[activeTestimonial]?.avatarInitials || 'SK'}
-                      </div>
-                    )}
-                  </div>
-
-                  <h4 className="text-lg text-[#F3F1ED] font-normal" style={{ fontFamily: 'var(--font-display)' }}>
-                    {testimonials[activeTestimonial]?.name}
-                  </h4>
-                  <p className="text-xs text-[#B59A62] font-light mt-1 tracking-wide">
-                    {testimonials[activeTestimonial]?.loc} {testimonials[activeTestimonial]?.project ? `· ${testimonials[activeTestimonial]?.project}` : ''}
-=======
         {testimonials && testimonials.length > 0 && (
-          <section className="section-padding" style={{ background: 'var(--color-bg)' }}>
+          <section className="section-padding relative overflow-hidden" style={{ background: 'var(--color-bg)' }}>
             <div className="container-narrow">
               <SectionReveal>
-                <span className="section-label mb-8 block justify-center">Client Voice</span>
+                <div className="text-center mb-6">
+                  <span className="section-label inline-block text-[#B59A62]">Client Voices</span>
+                </div>
 
-                <div className="text-center relative">
-                  {/* Large Quotation Mark */}
-                  <span
-                    className="block text-[#B59A62]/20 leading-none select-none -mb-12"
-                    style={{ fontFamily: 'var(--font-display)', fontSize: '10rem' }}
-                  >
-                    &ldquo;
-                  </span>
+                <div className="text-center relative bg-[#141414]/80 border border-white/10 rounded-3xl p-8 sm:p-14 shadow-2xl backdrop-blur-md group hover:border-[#B59A62]/40 transition-all duration-500">
+                  
+                  {/* 5-Star Rating & Verified Badge */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+                    <div className="flex items-center gap-1.5 text-[#B59A62]">
+                      {[...Array(testimonials[activeTestimonial]?.rating || 5)].map((_, i) => (
+                        <svg key={i} width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                      ))}
+                      <span className="text-xs font-semibold text-[#B59A62] ml-2">5.0 / 5.0</span>
+                    </div>
+
+                    <span className="text-[9px] tracking-[0.24em] uppercase px-3 py-1 rounded-full bg-emerald-950/40 text-emerald-400 border border-emerald-500/20 font-semibold flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Verified Client Reflection
+                    </span>
+                  </div>
 
                   {/* Main Quote Statement */}
                   <p
-                    className="display-md font-light text-[#F3F1ED] leading-snug mb-10"
+                    className="display-md font-light text-[#F3F1ED] leading-snug mb-10 min-h-[120px] flex items-center justify-center"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    {(testimonials[activeTestimonial] || testimonials[0])?.text}
->>>>>>> upstream/main
+                    &ldquo;{testimonials[activeTestimonial]?.text}&rdquo;
                   </p>
 
-<<<<<<< HEAD
-                {/* Switcher & Navigation Controls */}
-                <div className="flex items-center justify-center gap-4 mb-8">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-                    className="w-10 h-10 rounded-full border border-white/15 text-[#F3F1ED]/70 hover:text-[#B59A62] hover:border-[#B59A62] flex items-center justify-center transition-colors"
-                    aria-label="Previous review"
-                  >
-                    ←
-                  </button>
+                  {/* Client Profile Avatar & Metadata */}
+                  <div className="mb-8 flex flex-col items-center justify-center">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#B59A62] shadow-xl mb-3 bg-[#222] flex-shrink-0">
+                      {testimonials[activeTestimonial]?.avatar ? (
+                        <img
+                          src={testimonials[activeTestimonial].avatar}
+                          alt={testimonials[activeTestimonial].name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[#B59A62] font-bold text-sm bg-gradient-to-br from-[#1A1917] to-[#2B2822]">
+                          {testimonials[activeTestimonial]?.avatarInitials || 'SK'}
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="flex items-center gap-2">
-                    {testimonials.map((_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        aria-label={`View testimonial ${i + 1}`}
-                        onClick={() => setActiveTestimonial(i)}
-                        className={`h-1.5 rounded-full transition-all duration-300 ${
-                          i === activeTestimonial ? 'w-8 bg-[#B59A62]' : 'w-2 bg-white/20'
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-                    className="w-10 h-10 rounded-full border border-white/15 text-[#F3F1ED]/70 hover:text-[#B59A62] hover:border-[#B59A62] flex items-center justify-center transition-colors"
-                    aria-label="Next review"
-                  >
-                    →
-                  </button>
-                </div>
-
-                {/* Action Links to Dedicated Review Page */}
-                <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-4">
-                  <Link
-                    href="/reviews"
-                    className="px-6 py-3 rounded-xl bg-[#B59A62] text-[#111111] text-[11px] tracking-[0.22em] uppercase font-bold hover:bg-[#c4a96f] transition-all shadow-lg"
-                  >
-                    EXPLORE ALL REVIEWS ({testimonials.length}+)
-                  </Link>
-
-                  <Link
-                    href="/reviews"
-                    className="px-6 py-3 rounded-xl border border-white/20 text-[#F3F1ED] text-[11px] tracking-[0.22em] uppercase font-semibold hover:border-[#B59A62] hover:text-[#B59A62] transition-all"
-                  >
-                    + WRITE A REVIEW
-                  </Link>
-                </div>
-
-              </div>
-            </SectionReveal>
-          </div>
-        </section>
-=======
-                  {/* Client Metadata */}
-                  <div>
-                    <h4 className="text-base text-[#F3F1ED] font-medium" style={{ fontFamily: 'var(--font-body)' }}>
-                      {(testimonials[activeTestimonial] || testimonials[0])?.name}
+                    <h4 className="text-lg text-[#F3F1ED] font-normal" style={{ fontFamily: 'var(--font-display)' }}>
+                      {testimonials[activeTestimonial]?.name}
                     </h4>
-                    <p className="text-xs text-[#B59A62] font-light mt-1">
-                      {(testimonials[activeTestimonial] || testimonials[0])?.loc}{' '}
-                      {(testimonials[activeTestimonial] || testimonials[0])?.project
-                        ? `· ${(testimonials[activeTestimonial] || testimonials[0])?.project}`
-                        : ''}
+                    <p className="text-xs text-[#B59A62] font-light mt-1 tracking-wide">
+                      {testimonials[activeTestimonial]?.loc} {testimonials[activeTestimonial]?.project ? `· ${testimonials[activeTestimonial]?.project}` : ''}
                     </p>
                   </div>
 
-                  {/* Switcher Controls */}
-                  {testimonials.length > 1 && (
-                    <div className="flex items-center justify-center gap-3 mt-10">
+                  {/* Switcher & Navigation Controls */}
+                  <div className="flex items-center justify-center gap-4 mb-8">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
+                      className="w-10 h-10 rounded-full border border-white/15 text-[#F3F1ED]/70 hover:text-[#B59A62] hover:border-[#B59A62] flex items-center justify-center transition-colors"
+                      aria-label="Previous review"
+                    >
+                      ←
+                    </button>
+
+                    <div className="flex items-center gap-2">
                       {testimonials.map((_, i) => (
                         <button
                           key={i}
@@ -1237,13 +1074,39 @@ export default function HomePage({
                         />
                       ))}
                     </div>
-                  )}
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
+                      className="w-10 h-10 rounded-full border border-white/15 text-[#F3F1ED]/70 hover:text-[#B59A62] hover:border-[#B59A62] flex items-center justify-center transition-colors"
+                      aria-label="Next review"
+                    >
+                      →
+                    </button>
+                  </div>
+
+                  {/* Action Links to Dedicated Review Page */}
+                  <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-center gap-4">
+                    <Link
+                      href="/reviews"
+                      className="px-6 py-3 rounded-xl bg-[#B59A62] text-[#111111] text-[11px] tracking-[0.22em] uppercase font-bold hover:bg-[#c4a96f] transition-all shadow-lg"
+                    >
+                      EXPLORE ALL REVIEWS ({testimonials.length}+)
+                    </Link>
+
+                    <Link
+                      href="/reviews"
+                      className="px-6 py-3 rounded-xl border border-white/20 text-[#F3F1ED] text-[11px] tracking-[0.22em] uppercase font-semibold hover:border-[#B59A62] hover:text-[#B59A62] transition-all"
+                    >
+                      + WRITE A REVIEW
+                    </Link>
+                  </div>
+
                 </div>
               </SectionReveal>
             </div>
           </section>
         )}
->>>>>>> upstream/main
 
         {/* ═══════════════════════════════════════════════════════════════════
             SECTION 8 — FINAL PROJECT CTA (CINEMATIC ENDING)

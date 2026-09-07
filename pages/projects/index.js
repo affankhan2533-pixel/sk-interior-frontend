@@ -1,20 +1,13 @@
-<<<<<<< HEAD
 import { useState, useEffect, useRef } from 'react';
-=======
-import { useState, useEffect } from 'react';
->>>>>>> upstream/main
 import Link from 'next/link';
 import axios from 'axios';
 import SEO from '../../components/SEO';
 import SafeImage from '../../components/SafeImage';
 import ProjectCard from '../../components/ProjectCard';
 import SectionReveal from '../../components/SectionReveal';
-<<<<<<< HEAD
 import MagneticBtn from '../../components/MagneticBtn';
 import { PROJECTS, PROJECT_CATEGORIES } from '../../data/projects';
-=======
 import { API } from '../../lib/api';
->>>>>>> upstream/main
 
 export default function ProjectsPage({ initialProjects = [], initialError = null }) {
   const [projects, setProjects] = useState(initialProjects);
@@ -161,26 +154,6 @@ export default function ProjectsPage({ initialProjects = [], initialError = null
               </p>
             </div>
 
-<<<<<<< HEAD
-            {/* Category Filter Tabs */}
-            <div
-              className={`flex items-center gap-2.5 sm:gap-3 mt-12 pt-8 border-t border-white/10 overflow-x-auto no-scrollbar flex-nowrap sm:flex-wrap transition-all duration-1000 delay-400 ${
-                heroReady ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-              }`}
-            >
-              {PROJECT_CATEGORIES.map((cat) => {
-                const isActive = activeCategory === cat;
-                return (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => handleCategoryChange(cat)}
-                    aria-selected={isActive}
-                    role="tab"
-                    className={`min-h-[40px] px-5 py-2 rounded-full text-[10px] sm:text-[10.5px] tracking-[0.20em] uppercase font-semibold transition-all duration-300 flex-shrink-0 ${
-                      isActive
-                        ? 'bg-[#B59A62] text-[#111111] shadow-md scale-105'
-=======
             {/* Dynamic Category Filter Tabs */}
             {dynamicCategories.length > 1 && (
               <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 mt-12 pt-8 border-t border-white/10">
@@ -192,51 +165,20 @@ export default function ProjectsPage({ initialProjects = [], initialError = null
                     className={`min-h-[44px] px-6 py-2.5 rounded-full text-[10px] sm:text-[10.5px] tracking-[0.22em] uppercase font-semibold transition-all duration-300 ${
                       activeCategory.toLowerCase() === cat.toLowerCase()
                         ? 'bg-[#B59A62] text-[#111111]'
->>>>>>> upstream/main
                         : 'border border-white/15 text-[#F3F1ED]/60 hover:text-[#F3F1ED] hover:border-white/30'
                     }`}
                   >
                     {cat}
                   </button>
-<<<<<<< HEAD
-                );
-              })}
-            </div>
-=======
                 ))}
               </div>
             )}
->>>>>>> upstream/main
           </div>
         </section>
 
         {/* ── Project Grid Section ── */}
         <section className="section-padding" style={{ background: 'var(--color-surface)' }}>
           <div className="container-wide">
-<<<<<<< HEAD
-            <div
-              className={`transition-all duration-400 ease-out ${
-                isFiltering ? 'opacity-20 translate-y-2 scale-[0.99]' : 'opacity-100 translate-y-0 scale-100'
-              }`}
-            >
-              {filteredProjects.length === 0 ? (
-                <div className="text-center py-20">
-                  <p className="text-xl font-light text-[#151515]/60">No projects found in this category.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
-                  {filteredProjects.map((project, idx) => (
-                    <SectionReveal key={project.slug} delay={idx * 70}>
-                      <ProjectCard
-                        project={project}
-                        aspect={idx % 3 === 0 ? 'ratio-16-9' : 'ratio-4-3'}
-                      />
-                    </SectionReveal>
-                  ))}
-                </div>
-              )}
-            </div>
-=======
             {/* Loading State */}
             {loading && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
@@ -314,7 +256,6 @@ export default function ProjectsPage({ initialProjects = [], initialError = null
                 ))}
               </div>
             )}
->>>>>>> upstream/main
           </div>
         </section>
 

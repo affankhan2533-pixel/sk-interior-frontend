@@ -6,11 +6,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'http', hostname: 'localhost' },
-<<<<<<< HEAD
       { protocol: 'http', hostname: '127.0.0.1' },
-=======
-      { protocol: 'https', hostname: 'res.cloudinary.com' },
->>>>>>> upstream/main
     ],
   },
   async rewrites() {

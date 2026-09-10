@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import PageTransition from '../components/PageTransition';
 import CustomCursor from '../components/CustomCursor';
 import LuxuryLoader from '../components/LuxuryLoader';
+import FloatingWidgets from '../components/FloatingWidgets';
 import useScrollProgress from '../lib/useScrollProgress';
 
 function isAdminRoute(pathname) {
@@ -34,6 +35,8 @@ export default function App({ Component, pageProps }) {
       </PageTransition>
 
       {!admin && <Footer />}
+      {!admin && <FloatingWidgets />}
     </>
   );
 }
+
